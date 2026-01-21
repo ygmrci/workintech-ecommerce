@@ -1,12 +1,14 @@
-import React from "react";
-
-import "./App.css";
+import Header from "./layout/Header";
+import PageContent from "./layout/PageContent";
+import Footer from "./layout/Footer";
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold">Tailwind OK</h1>
-    </>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <PageContent />
+      <Footer />
+    </div>
   );
 }
 
