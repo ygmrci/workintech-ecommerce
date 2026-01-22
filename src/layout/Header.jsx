@@ -18,7 +18,7 @@ export default function Header() {
   return (
     <header className="w-full flex flex-col">
       {/* Top Bar */}
-      <div className="w-full bg-[#252B42] text-white">
+      <div className="hidden md:block w-full bg-[#252B42] text-white">
         <div className="w-full max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2 px-4 py-2">
           {/* Left */}
           <div className="flex items-center gap-4 text-xs">
@@ -51,7 +51,7 @@ export default function Header() {
 
       {/* Main Header */}
       <div className="w-full border-b bg-white">
-        <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-4 py-4">
+        <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-4 py-3 md:py-4">
           {/* Brand */}
           <Link to="/" className="text-xl font-bold text-[#252B42]">
             Bandage
@@ -100,7 +100,7 @@ export default function Header() {
 
             <Link
               to="/favorites"
-              className="flex items-center gap-1"
+              className="hidden md:flex items-center gap-1"
               aria-label="Favorites"
             >
               <Heart size={18} />
@@ -112,7 +112,21 @@ export default function Header() {
               aria-label="Menu"
               onClick={() => setIsMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
+              {isMenuOpen ? (
+                <svg
+                  width="23"
+                  height="14"
+                  viewBox="0 0 23 14"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect x="0" y="0" width="23" height="2" fill="#252B42" />
+                  <rect x="6" y="6" width="17" height="2" fill="#252B42" />
+                  <rect x="12" y="12" width="11" height="2" fill="#252B42" />
+                </svg>
+              ) : (
+                <Menu size={24} />
+              )}
             </button>
           </div>
         </div>
@@ -120,7 +134,7 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden w-full border-t">
             <div className="flex flex-col items-center gap-6 py-8 text-[20px] text-[#737373]">
-              <Link to="/" className="text-[#252B42]">
+              <Link to="/" className="text-[#737373]">
                 Home
               </Link>
               <Link to="/product" className="hover:text-[#252B42]">

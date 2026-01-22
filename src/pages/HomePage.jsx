@@ -148,20 +148,21 @@ const vitaSlides = [
     id: "vita-1",
     variant: "product",
     kicker: "SUMMER 2020",
-    title: "Vita Classic Product",
+    title: "Vita Classic\nProduct",
     description:
       "We know how large objects will act, We know how are objects will act, We know",
     price: "$16.48",
     cta: "ADD TO CART",
     image: bannerVita,
     bgColor: "#23856D",
-    height: 700,
+    height: 783,
+    textOffsetY: 24,
   },
   {
     id: "vita-2",
     variant: "hero",
     kicker: "SUMMER 2020",
-    title: "IT'S A SPECIAL GIFT",
+    title: "IT'S A SPECIAL\nGIFT",
     description:
       "We know how large objects will act, but things on a small scale.",
     cta: "SHOP NOW",
@@ -169,7 +170,10 @@ const vitaSlides = [
     bgColor: "#A9B0B9",
     textColor: "text-white",
     buttonClass: "bg-[#23A6F0] text-white",
-    height: 700,
+    height: 753,
+    textOffsetY: 24,
+    bgPosition: "center",
+    bgSize: "cover",
   },
 ];
 
@@ -192,12 +196,11 @@ export default function HomePage() {
 
       <section className="w-full py-12">
         <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-4 px-4">
-          <div className="text-center">
-            
-            <h3 className="text-[24px] font-bold text-[#252B42] mt-2">
+          <div className="text-center w-full max-w-[607px] flex flex-col gap-[10px] md:max-w-none">
+            <h3 className="text-[24px] font-bold text-[#252B42] leading-[32px]">
               EDITOR&apos;S PICK
             </h3>
-            <p className="text-[14px] text-[#737373] mt-2">
+            <p className="text-[14px] text-[#737373] leading-[20px] md:max-w-[347px] mx-auto">
               Problems trying to resolve the conflict between
             </p>
           </div>
@@ -205,12 +208,12 @@ export default function HomePage() {
           <div className="w-full flex flex-col gap-6 md:flex-row md:justify-center">
             <button
               type="button"
-              className="group relative w-full md:w-[510px] md:h-[500px]"
+              className="group relative w-[324px] h-[500px] md:w-[510px] md:h-[500px] mx-auto"
             >
               <img
                 src={editorCards[0].image}
                 alt={editorCards[0].label}
-                className="w-full h-[320px] md:h-full object-cover group-hover:opacity-90"
+                className="w-full h-full object-cover group-hover:opacity-90"
               />
               <span className="absolute left-4 bottom-4 bg-white px-6 py-2 text-sm font-bold text-[#252B42] group-hover:bg-[#252B42] group-hover:text-white transition-colors">
                 {editorCards[0].label}
@@ -219,12 +222,12 @@ export default function HomePage() {
 
             <button
               type="button"
-              className="group relative w-full md:w-[240px] md:h-[500px]"
+              className="group relative w-[324px] h-[500px] md:w-[240px] md:h-[500px] mx-auto"
             >
               <img
                 src={editorCards[1].image}
                 alt={editorCards[1].label}
-                className="w-full h-[320px] md:h-full object-cover group-hover:opacity-90"
+                className="w-full h-full object-cover group-hover:opacity-90"
               />
               <span className="absolute left-4 bottom-4 bg-white px-6 py-2 text-sm font-bold text-[#252B42] group-hover:bg-[#252B42] group-hover:text-white transition-colors">
                 {editorCards[1].label}
@@ -234,12 +237,12 @@ export default function HomePage() {
             <div className="w-full md:w-[240px] flex flex-col gap-4">
               <button
                 type="button"
-                className="group relative w-full md:h-[242px]"
+                className="group relative w-[325px] h-[242px] md:w-full md:h-[242px] mx-auto"
               >
                 <img
                   src={editorCards[2].image}
                   alt={editorCards[2].label}
-                  className="w-full h-[200px] md:h-full object-cover group-hover:opacity-90"
+                  className="w-full h-full object-cover group-hover:opacity-90"
                 />
                 <span className="absolute left-4 bottom-4 bg-white px-5 py-2 text-sm font-bold text-[#252B42] group-hover:bg-[#252B42] group-hover:text-white transition-colors">
                   {editorCards[2].label}
@@ -247,12 +250,12 @@ export default function HomePage() {
               </button>
               <button
                 type="button"
-                className="group relative w-full md:h-[242px]"
+                className="group relative w-[325px] h-[242px] md:w-full md:h-[242px] mx-auto"
               >
                 <img
                   src={editorCards[3].image}
                   alt={editorCards[3].label}
-                  className="w-full h-[200px] md:h-full object-cover group-hover:opacity-90"
+                  className="w-full h-full object-cover group-hover:opacity-90"
                 />
                 <span className="absolute left-4 bottom-4 bg-white px-5 py-2 text-sm font-bold text-[#252B42] group-hover:bg-[#252B42] group-hover:text-white transition-colors">
                   {editorCards[3].label}
@@ -265,12 +268,12 @@ export default function HomePage() {
 
       <section className="w-full py-12">
         <div className="w-full max-w-6xl mx-auto px-4">
-          <div className="text-center">
-          <p className="text-[14px] text-[#737373]">Featured Products</p>
-            <h3 className="text-[24px] font-bold text-[#252B42] mt-2">
+          <div className="text-center w-full max-w-[279px] mx-auto flex flex-col gap-[10px]">
+            <p className="text-[14px] text-[#737373]">Featured Products</p>
+            <h3 className="text-[24px] font-bold text-[#252B42]">
               BESTSELLER PRODUCTS
             </h3>
-            <p className="text-[14px] text-[#737373] mt-2">
+            <p className="text-[14px] text-[#737373]">
               Problems trying to resolve the conflict between
             </p>
           </div>
@@ -307,36 +310,43 @@ export default function HomePage() {
               <div
                 key={slide.id}
                 className="keen-slider__slide w-full min-w-full"
+                style={{ minHeight: `${slide.height || 700}px` }}
               >
                 <div
-                  className="w-full"
+                  className="w-full h-full"
                   style={{
                     backgroundColor: slide.bgColor || "#23856D",
                     backgroundImage: slide.bgImage
                       ? `url(${slide.bgImage})`
                       : undefined,
-                    backgroundSize: slide.bgImage ? "cover" : undefined,
+                    backgroundSize: slide.bgImage
+                      ? slide.bgSize || "cover"
+                      : undefined,
                     backgroundPosition: slide.bgImage
-                      ? "center right"
+                      ? slide.bgPosition || "center right"
                       : undefined,
                     minHeight: `${slide.height || 700}px`,
                   }}
                 >
-                  <div className="w-full max-w-6xl mx-auto px-4 flex flex-col-reverse md:flex-row items-center justify-between gap-8">
+                  <div className="w-full px-4 flex flex-col md:flex-row items-center justify-between gap-8">
                     <div
-                      className={`w-full md:w-[509px] flex flex-col gap-[30px] md:pt-[60px] md:h-[432px] ${textColor} items-center text-center md:items-start md:text-left`}
-                      style={{ transform: "translateY(64px)" }}
+                      className={`w-full md:w-[509px] flex flex-col gap-[30px] md:pt-[60px] md:h-[432px] ${textColor} items-center text-center md:items-start md:text-left order-1 md:order-1 md:translate-y-16`}
+                      style={{
+                        transform: `translateY(${slide.textOffsetY || 0}px)`,
+                      }}
                     >
-                      <p className="text-[12px] tracking-widest">
+                      <p className="text-[12px] tracking-widest mt-4">
                         {slide.kicker}
                       </p>
-                      <h3 className="text-[40px] md:text-[58px] leading-[52px] md:leading-[80px] font-bold tracking-[0.2px]">
+                      <h3 className="text-[40px] md:text-[58px] leading-[52px] md:leading-[80px] font-bold tracking-[0.2px] whitespace-pre-line">
                         {slide.title}
                       </h3>
-                      <p className={`text-[14px] leading-[20px] ${descColor}`}>
+                      <p
+                        className={`text-[20px] leading-[30px] tracking-[0.2px] max-w-[291px] ${descColor}`}
+                      >
                         {slide.description}
                       </p>
-                      <div className="flex items-center gap-6 justify-center md:justify-start">
+                      <div className="flex flex-col items-center gap-4 justify-center md:flex-row md:gap-6 md:justify-start">
                         {slide.price && (
                           <span className="text-[20px] font-bold">
                             {slide.price}
@@ -352,11 +362,11 @@ export default function HomePage() {
                       </div>
                     </div>
                     {slide.image && (
-                      <div className="w-full md:w-[450px] md:h-[700px] flex items-end justify-center md:justify-end">
+                      <div className="w-full md:w-[450px] md:h-[700px] flex items-end justify-start md:justify-end order-2 md:order-2">
                         <img
                           src={slide.image}
                           alt={slide.title}
-                          className="w-full h-[300px] md:h-full object-contain translate-y-12"
+                          className="w-[360px] h-[360px] md:h-full md:w-full object-contain translate-y-12"
                         />
                       </div>
                     )}

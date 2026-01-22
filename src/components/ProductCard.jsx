@@ -9,19 +9,22 @@ export default function ProductCard({
   colors = [],
 }) {
   return (
-    <div className="w-full flex flex-col">
-      <Link to="/product" className="w-full overflow-hidden bg-white">
+    <div className="w-full flex flex-col items-center">
+      <Link
+        to="/product"
+        className="w-full overflow-hidden bg-white max-w-[360px] h-[427px]"
+      >
         <img
           src={image}
           alt={title}
-          className="w-full h-[280px] md:h-[300px] object-contain object-top"
+          className="w-full h-full object-contain object-top"
           loading="lazy"
         />
       </Link>
 
-      <div className="w-full flex flex-col items-center text-center gap-2 py-4">
-        <h4 className="text-sm font-bold text-[#252B42]">{title}</h4>
-        <p className="text-xs text-[#737373]">{department}</p>
+      <div className="w-full max-w-[300px] flex flex-col items-center text-center gap-[10px] py-4">
+        <h4 className="text-[16px] font-bold text-[#252B42]">{title}</h4>
+        <p className="text-[14px] text-[#737373]">{department}</p>
         <div className="flex items-center gap-2 text-sm">
           <span className="text-[#BDBDBD] line-through">{price}</span>
           <span className="text-[#23856D] font-bold">{discountPrice}</span>
