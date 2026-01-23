@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   Phone,
   Mail,
@@ -59,24 +59,49 @@ export default function Header() {
 
           {/* Nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm text-[#737373]">
-            <Link to="/" className="text-[#252B42]">
+            <NavLink
+              exact
+              to="/"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
               Home
-            </Link>
-            <Link to="/shop" className="hover:text-[#252B42]">
+            </NavLink>
+            <NavLink
+              to="/shop"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
               Shop
-            </Link>
-            <Link to="/about" className="hover:text-[#252B42]">
+            </NavLink>
+            <NavLink
+              to="/about"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
               About
-            </Link>
-            <Link to="/blog" className="hover:text-[#252B42]">
+            </NavLink>
+            <NavLink
+              to="/blog"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
               Blog
-            </Link>
-            <Link to="/contact" className="hover:text-[#252B42]">
+            </NavLink>
+            <NavLink
+              to="/contact"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
               Contact
-            </Link>
-            <Link to="/pages" className="hover:text-[#252B42]">
+            </NavLink>
+            <NavLink
+              to="/pages"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
               Pages
-            </Link>
+            </NavLink>
           </nav>
 
           {/* Right actions */}
@@ -134,18 +159,49 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden w-full border-t">
             <div className="flex flex-col items-center gap-6 py-8 text-[20px] text-[#737373]">
-              <Link to="/" className="text-[#737373]">
+              <NavLink
+                exact
+                to="/"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
                 Home
-              </Link>
-              <Link to="/product" className="hover:text-[#252B42]">
-                Product
-              </Link>
-              <Link to="/pricing" className="hover:text-[#252B42]">
-                Pricing
-              </Link>
-              <Link to="/contact" className="hover:text-[#252B42]">
+              </NavLink>
+              <NavLink
+                to="/shop"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
+                Shop
+              </NavLink>
+              <NavLink
+                to="/about"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
+                About
+              </NavLink>
+              <NavLink
+                to="/blog"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
+                Blog
+              </NavLink>
+              <NavLink
+                to="/contact"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
                 Contact
-              </Link>
+              </NavLink>
+              <NavLink
+                to="/pages"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
+                Pages
+              </NavLink>
             </div>
           </div>
         )}

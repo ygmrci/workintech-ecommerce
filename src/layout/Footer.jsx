@@ -4,12 +4,24 @@ export default function Footer() {
   return (
     <footer className="w-full border-t mt-auto">
       <div className="w-full bg-[#FAFAFA] border-b border-[#E6E6E6]">
-        <div className="w-full max-w-6xl mx-auto flex items-center justify-between px-4 py-8">
+        <div className="w-full max-w-6xl mx-auto flex flex-col items-start gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between">
           <span className="text-lg font-bold text-[#252B42]">Bandage</span>
-          <div className="flex items-center gap-4 text-[#23A6F0]">
-            <Facebook size={20} />
-            <Instagram size={20} />
-            <Twitter size={20} />
+          <div className="flex items-center gap-4">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#23A6F0]">
+              <Facebook
+                size={18}
+                strokeWidth={1.25}
+                className="text-white"
+                fill="white"
+              />
+            </span>
+            <Instagram size={24} strokeWidth={1.5} className="text-[#23A6F0]" />
+            <Twitter
+              size={24}
+              strokeWidth={1.5}
+              className="text-[#23A6F0]"
+              fill="#23A6F0"
+            />
           </div>
         </div>
       </div>

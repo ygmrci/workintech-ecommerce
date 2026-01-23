@@ -17,7 +17,7 @@ import product07 from "../assets/home/products/product-07.jpg";
 import product08 from "../assets/home/products/product-08.jpg";
 import bannerVita from "../assets/home/banners/banner-vita.png";
 import bannerVita2 from "../assets/home/banners/banner-vita-2.png";
-import promoCouple from "../assets/home/banners/promo-couple.jpg";
+import promoCouple from "../assets/home/banners/promo-couple.png";
 import post01 from "../assets/home/posts/post-01.jpg";
 import post02 from "../assets/home/posts/post-02.jpg";
 import post03 from "../assets/home/posts/post-03.jpg";
@@ -268,7 +268,7 @@ export default function HomePage() {
 
       <section className="w-full py-12">
         <div className="w-full max-w-6xl mx-auto px-4">
-          <div className="text-center w-full max-w-[279px] mx-auto flex flex-col gap-[10px]">
+          <div className="text-center w-full max-w-[279px] md:max-w-[500px] mx-auto flex flex-col gap-[10px]">
             <p className="text-[14px] text-[#737373]">Featured Products</p>
             <h3 className="text-[24px] font-bold text-[#252B42]">
               BESTSELLER PRODUCTS
@@ -328,45 +328,72 @@ export default function HomePage() {
                     minHeight: `${slide.height || 700}px`,
                   }}
                 >
-                  <div className="w-full px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+                  <div
+                    className={`w-full px-4 flex flex-col md:flex-row items-center justify-center gap-6 ${
+                      slide.id === "vita-2" ? "md:gap-12" : "md:gap-4"
+                    } relative pb-[300px] sm:pb-[320px] md:pb-0`}
+                  >
                     <div
-                      className={`w-full md:w-[509px] flex flex-col gap-[30px] md:pt-[60px] md:h-[432px] ${textColor} items-center text-center md:items-start md:text-left order-1 md:order-1 md:translate-y-16`}
-                      style={{
-                        transform: `translateY(${slide.textOffsetY || 0}px)`,
-                      }}
+                      className={
+                        slide.id === "vita-2" ? "md:-translate-x-52" : ""
+                      }
                     >
-                      <p className="text-[12px] tracking-widest mt-4">
-                        {slide.kicker}
-                      </p>
-                      <h3 className="text-[40px] md:text-[58px] leading-[52px] md:leading-[80px] font-bold tracking-[0.2px] whitespace-pre-line">
-                        {slide.title}
-                      </h3>
-                      <p
-                        className={`text-[20px] leading-[30px] tracking-[0.2px] max-w-[291px] ${descColor}`}
+                      <div
+                        className={`w-full md:w-[509px] flex flex-col gap-[30px] md:pt-[60px] md:h-[432px] ${textColor} items-center text-center md:items-start md:text-left order-1 md:order-1 md:translate-y-16`}
+                        style={{
+                          transform: `translateY(${slide.textOffsetY || 0}px)`,
+                        }}
                       >
-                        {slide.description}
-                      </p>
-                      <div className="flex flex-col items-center gap-4 justify-center md:flex-row md:gap-6 md:justify-start">
-                        {slide.price && (
-                          <span className="text-[20px] font-bold">
-                            {slide.price}
-                          </span>
-                        )}
-                        <button
-                          className={`px-6 py-3 text-sm font-semibold rounded-none ${
-                            slide.buttonClass || "bg-[#2DC071] text-white"
+                        <p className="text-[12px] tracking-widest mt-4">
+                          {slide.kicker}
+                        </p>
+                        <h3 className="text-[40px] md:text-[58px] leading-[52px] md:leading-[80px] font-bold tracking-[0.2px] whitespace-pre-line">
+                          {slide.title}
+                        </h3>
+                        <p
+                          className={`text-[20px] leading-[30px] tracking-[0.2px] max-w-[291px] ${descColor} ${
+                            slide.variant === "product"
+                              ? "md:text-[14px] md:leading-[20px] md:max-w-none md:whitespace-pre-line"
+                              : ""
                           }`}
                         >
-                          {slide.cta}
-                        </button>
+                          {slide.variant === "product" ? (
+                            <>
+                              <span className="md:hidden">
+                                {slide.description}
+                              </span>
+                              <span className="hidden md:inline">
+                                We know how large objects will act, We know
+                                <br />
+                                how are objects will act, We know
+                              </span>
+                            </>
+                          ) : (
+                            slide.description
+                          )}
+                        </p>
+                        <div className="flex flex-col items-center gap-4 justify-center md:flex-row md:gap-6 md:justify-start">
+                          {slide.price && (
+                            <span className="text-[20px] font-bold">
+                              {slide.price}
+                            </span>
+                          )}
+                          <button
+                            className={`px-6 py-3 text-sm font-semibold rounded-none ${
+                              slide.buttonClass || "bg-[#2DC071] text-white"
+                            }`}
+                          >
+                            {slide.cta}
+                          </button>
+                        </div>
                       </div>
                     </div>
                     {slide.image && (
-                      <div className="w-full md:w-[450px] md:h-[700px] flex items-end justify-start md:justify-end order-2 md:order-2">
+                      <div className="absolute left-0 bottom-0 w-[56%] max-w-[260px] sm:w-[48%] sm:max-w-none md:static md:left-0 md:w-[450px] md:h-[700px] flex items-end justify-start md:justify-end order-2 md:order-2 -translate-x-[6px] sm:-translate-x-[4px] md:-translate-x-[24px] translate-y-[92px] sm:translate-y-[34px] md:translate-y-[84px]">
                         <img
                           src={slide.image}
                           alt={slide.title}
-                          className="w-[360px] h-[360px] md:h-full md:w-full object-contain translate-y-12"
+                          className="w-full h-auto md:h-full md:w-full object-contain translate-y-0 md:translate-y-12"
                         />
                       </div>
                     )}
@@ -407,28 +434,28 @@ export default function HomePage() {
 
       <section className="w-full py-14">
         <div className="w-full max-w-6xl mx-auto px-4 flex flex-col-reverse md:flex-row gap-8 items-center md:gap-16">
-          <div className="w-full md:w-[725px] md:h-[774px]">
+          <div className="w-full h-[410px] md:w-[704px] md:h-[682px] flex items-end justify-center px-2 md:px-4">
             <img
               src={promoCouple}
               alt="Part of the Neural Universe"
-              className="w-full h-[330px] md:h-full object-cover -translate-y-14"
+              className="w-full h-full object-cover -translate-x-3 md:translate-x-0 md:-translate-y-28"
             />
           </div>
-          <div className="w-full md:w-[510px] flex flex-col gap-4 text-center md:text-left items-center md:items-start">
-            <p className="text-[12px] text-[#BDBDBD] tracking-widest">
+          <div className="w-full md:w-[510px] flex flex-col gap-4 text-center md:text-left items-center md:items-start pb-6 md:pb-0">
+            <p className="text-[14px] text-[#BDBDBD] tracking-widest">
               SUMMER 2020
             </p>
-            <h3 className="text-[40px] leading-[50px] font-bold tracking-[0.2px] text-[#252B42]">
+            <h3 className="text-[40px] leading-[50px] font-bold tracking-[0.2px] text-[#252B42] max-w-[303px] md:max-w-none mx-auto md:mx-0">
               Part of the Neural Universe
             </h3>
-            <p className="text-[14px] leading-[20px] text-[#737373] max-w-md">
+            <p className="text-[20px] leading-[30px] font-normal tracking-[0.2px] text-[#737373] max-w-[262px] md:max-w-md mx-auto md:mx-0">
               We know how large objects will act, but things on a small scale.
             </p>
-            <div className="flex items-center gap-4">
-              <button className="px-6 py-3 bg-[#2DC071] text-white text-sm font-semibold rounded-none">
+            <div className="flex flex-col sm:flex-row items-center gap-[10px] sm:gap-4">
+              <button className="w-[151px] py-[15px] bg-[#23A6F0] text-white text-sm font-semibold rounded-[5px] text-center">
                 BUY NOW
               </button>
-              <button className="px-6 py-3 border border-[#2DC071] text-[#2DC071] text-sm font-semibold rounded-none">
+              <button className="w-[151px] py-[15px] border border-[#23A6F0] text-[#23A6F0] text-sm font-semibold rounded-[5px] text-center">
                 READ MORE
               </button>
             </div>
@@ -440,11 +467,19 @@ export default function HomePage() {
         <div className="w-full max-w-6xl mx-auto px-4">
           <div className="text-center">
             <p className="text-[14px] text-[#23A6F0]">Practice Advice</p>
-            <h3 className="text-[24px] font-bold text-[#252B42] mt-2">
-              Featured Posts
+            <h3 className="text-[40px] leading-[50px] font-bold tracking-[0.2px] text-[#252B42] mt-2 whitespace-pre-line max-w-[239px] mx-auto md:max-w-none">
+              <span className="md:hidden">{"Featured\nPosts"}</span>
+              <span className="hidden md:inline">Featured Posts</span>
             </h3>
-            <p className="text-[14px] text-[#737373] mt-2">
-              Problems trying to resolve the conflict between
+            <p className="text-[14px] text-[#737373] mt-2 whitespace-pre-line max-w-[469px] mx-auto">
+              <span className="md:hidden">
+                {"Problems trying to resolve the\nconflict between the two major"}
+              </span>
+              <span className="hidden md:inline">
+                Problems trying to resolve the conflict between
+                <br />
+                the two major realms of Classical physics: Newtonian mechanics
+              </span>
             </p>
           </div>
 
@@ -452,7 +487,7 @@ export default function HomePage() {
             {posts.map((post) => (
               <article
                 key={post.id}
-                className="bg-white shadow-sm w-full md:max-w-[348px]"
+                className="bg-white shadow-sm w-[330px] max-w-full mx-auto"
               >
                 <div className="relative">
                   <img
@@ -473,7 +508,7 @@ export default function HomePage() {
                   <h4 className="text-[20px] leading-[30px] font-normal text-[#252B42] max-w-[247px]">
                     {post.title}
                   </h4>
-                  <p className="text-[14px] leading-[20px] text-[#737373]">
+                  <p className="text-[14px] leading-[20px] tracking-[0.2px] font-normal text-[#737373] max-w-[280px]">
                     {post.description}
                   </p>
                   <div className="flex items-center justify-between text-[12px] text-[#737373]">

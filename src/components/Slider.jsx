@@ -15,6 +15,7 @@ const slides = [
     desc: "We know how large objects will act,\nbut things on a small scale.",
     cta: "SHOP NOW",
     position: "center 50%",
+    align: "center",
     height: 700,
   },
   {
@@ -65,34 +66,31 @@ export default function Slider() {
             {s.variant === "card" ? (
               <div className="w-full h-[700px] flex items-center justify-center bg-white px-4">
                 <div
-                  className="w-full max-w-[1292px] flex items-center rounded-[20px] overflow-hidden px-6 md:px-10"
+                  className="w-full max-w-[1292px] flex flex-col items-center gap-6 rounded-[20px] px-6 md:px-10 md:flex-row"
                   style={{
                     height: `${s.cardHeight || 622}px`,
                     backgroundImage: s.gradient,
                   }}
                 >
-                  <div className="flex-1 flex flex-col gap-4">
+                  <div className="w-full flex flex-col gap-4 items-center text-center mt-28 md:mt-0 md:flex-1 md:items-start md:text-left">
                     <p className="text-[12px] tracking-widest font-semibold text-[#252B42]">
                       {s.kicker}
                     </p>
                     <h2 className="text-[40px] md:text-[46px] font-extrabold text-[#252B42]">
                       {s.title}
                     </h2>
-                    <p className="text-[14px] text-[#737373] max-w-md">
+                    <p className="text-[20px] leading-[30px] tracking-[0.2px] text-[#737373] max-w-[291px]">
                       {s.desc}
                     </p>
                     <button className="w-fit px-8 py-3 text-sm font-semibold rounded-none bg-[#23A6F0] text-white">
                       {s.cta}
                     </button>
                   </div>
-                  <div className="flex-1 h-full flex items-end justify-end">
+                  <div className="w-full flex items-end justify-center translate-y-12 sm:translate-y-16 md:flex-1 md:justify-end md:h-full md:translate-y-0">
                     <img
                       src={s.img}
                       alt={s.title}
-                      className="h-full object-contain"
-                      style={{
-                        transform: `translateY(${s.imageOffsetY || 0}px)`,
-                      }}
+                      className="w-full max-w-[300px] object-contain md:max-w-none md:h-full md:translate-x-0 md:scale-100 md:translate-y-24"
                       loading="lazy"
                     />
                   </div>
@@ -121,12 +119,14 @@ export default function Slider() {
                 >
                   <div
                     className={`w-full max-w-6xl mx-auto flex items-center px-6 md:px-10 ${
-                      s.align === "center" ? "justify-center" : ""
+                      s.align === "center" ? "justify-center md:justify-start" : ""
                     }`}
                   >
                     <div
                       className={`flex flex-col max-w-xl ${
-                        s.align === "center" ? "items-center text-center" : ""
+                        s.align === "center"
+                          ? "items-center text-center md:items-start md:text-left"
+                          : ""
                       }`}
                       style={{
                         transform: `translateY(${s.offsetY || 0}px)`,
