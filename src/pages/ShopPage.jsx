@@ -164,12 +164,12 @@ export default function ShopPage() {
   return (
     <div className="w-full flex flex-col">
       <section className="w-full bg-white">
-        <div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-10 flex flex-col gap-6">
-          <div className="flex items-center justify-between">
+        <div className="w-full max-w-6xl mx-auto px-4 py-6 md:py-10 flex flex-col gap-6">
+          <div className="flex flex-col gap-3 text-center md:flex-row md:items-center md:justify-between md:text-left">
             <h1 className="text-[24px] md:text-[30px] font-bold text-[#252B42]">
               Shop
             </h1>
-            <div className="flex items-center gap-2 text-sm text-[#737373]">
+            <div className="flex items-center justify-center gap-2 text-sm text-[#737373] md:justify-end">
               <Link to="/" className="text-[#252B42] font-semibold">
                 Home
               </Link>
@@ -178,11 +178,11 @@ export default function ShopPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {categories.map((category) => (
               <div
                 key={category.id}
-                className="relative w-full h-[223px] overflow-hidden rounded-sm"
+                className="relative w-full max-w-[332px] h-[300px] mx-auto sm:max-w-none sm:h-[210px] md:h-[223px] overflow-hidden rounded-sm"
               >
                 <img
                   src={category.image}
@@ -204,12 +204,12 @@ export default function ShopPage() {
 
       <section className="w-full bg-[#FAFAFA] border-y border-[#E6E6E6]">
         <div className="w-full max-w-6xl mx-auto px-4 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <p className="text-[14px] text-[#737373]">
+          <p className="text-[14px] text-[#737373] text-center md:text-left">
             Showing all {products.length} results
           </p>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="flex items-center gap-2 text-[14px] text-[#737373]">
+          <div className="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row">
+            <div className="flex items-center justify-center gap-3 text-[14px] text-[#737373]">
               <span>Views:</span>
               <button
                 type="button"
@@ -227,13 +227,13 @@ export default function ShopPage() {
               </button>
             </div>
 
-            <div className="flex items-center gap-3">
-              <select className="h-[50px] px-5 border border-[#E6E6E6] text-[14px] text-[#737373] rounded">
+            <div className="flex w-full max-w-[252px] items-center gap-3">
+              <select className="h-[50px] flex-1 px-5 border border-[#E6E6E6] text-[14px] text-[#737373] rounded">
                 <option>Popularity</option>
               </select>
               <button
                 type="button"
-                className="h-[50px] px-6 bg-[#23A6F0] text-white text-[14px] rounded"
+                className="h-[50px] w-[90px] bg-[#23A6F0] text-white text-[14px] rounded"
               >
                 Filter
               </button>
@@ -249,10 +249,14 @@ export default function ShopPage() {
               Yükleniyor...
             </div>
           ) : (
-            <div className="flex flex-wrap gap-6">
+            <div className="flex flex-wrap gap-6 justify-center md:justify-start">
               {visibleProducts.map((product) => (
-                <div key={product.id} className="w-full md:w-[calc(25%-18px)]">
+                <div
+                  key={product.id}
+                  className="w-full sm:w-[calc(50%-12px)] md:w-[calc(25%-18px)]"
+                >
                   <ProductCard
+                  id={product.id}
                     image={product.image}
                     title={product.title}
                     department={product.department}
@@ -266,10 +270,10 @@ export default function ShopPage() {
           )}
 
           <div className="mt-12 flex justify-center">
-            <div className="inline-flex border border-[#BDBDBD] rounded overflow-hidden text-[14px] text-[#23A6F0]">
+            <div className="inline-flex border border-[#BDBDBD] rounded overflow-hidden text-[12px] sm:text-[14px] text-[#23A6F0]">
               <button
                 type="button"
-                className={`px-5 py-3 border-r border-[#BDBDBD] ${
+                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
                   currentPage === 1 ? "text-[#BDBDBD]" : "text-[#23A6F0]"
                 }`}
                 onClick={() => goToPage(1)}
@@ -279,7 +283,7 @@ export default function ShopPage() {
               </button>
               <button
                 type="button"
-                className={`px-5 py-3 border-r border-[#BDBDBD] ${
+                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
                   currentPage === 1
                     ? "bg-[#23A6F0] text-white"
                     : "text-[#23A6F0]"
@@ -291,7 +295,7 @@ export default function ShopPage() {
               </button>
               <button
                 type="button"
-                className={`px-5 py-3 border-r border-[#BDBDBD] ${
+                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
                   currentPage === 2
                     ? "bg-[#23A6F0] text-white"
                     : "text-[#23A6F0]"
@@ -303,7 +307,7 @@ export default function ShopPage() {
               </button>
               <button
                 type="button"
-                className={`px-5 py-3 border-r border-[#BDBDBD] ${
+                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
                   currentPage === 3
                     ? "bg-[#23A6F0] text-white"
                     : "text-[#23A6F0]"
@@ -315,7 +319,7 @@ export default function ShopPage() {
               </button>
               <button
                 type="button"
-                className={`px-5 py-3 ${
+                className={`px-3 py-3 sm:px-5 ${
                   currentPage === pageCount
                     ? "text-[#BDBDBD]"
                     : "text-[#23A6F0]"
@@ -332,13 +336,15 @@ export default function ShopPage() {
 
       <section className="w-full bg-[#FAFAFA] border-t border-[#E6E6E6]">
         <div className="w-full max-w-6xl mx-auto px-4 py-10">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 items-center justify-items-center gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 items-center justify-items-center gap-6">
             {logos.map((logo, index) => (
               <img
                 key={`${logo}-${index}`}
                 src={logo}
                 alt={`Brand logo ${index + 1}`}
-                className="h-10 w-auto object-contain"
+                className={`w-auto object-contain ${
+                  index === 0 ? "h-10" : index === 5 ? "h-16" : "h-14"
+                }`}
                 loading="lazy"
               />
             ))}

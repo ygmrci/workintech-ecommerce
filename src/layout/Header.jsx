@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Heart,
   Menu,
+  User,
 } from "lucide-react";
 
 export default function Header() {
@@ -110,13 +111,13 @@ export default function Header() {
               <span>Login / Register</span>
             </Link>
 
-            <button className="p-2" aria-label="Search">
+            <button className="hidden md:inline-flex p-2" aria-label="Search">
               <Search size={18} />
             </button>
 
             <Link
               to="/cart"
-              className="flex items-center gap-1"
+              className="hidden md:flex items-center gap-1"
               aria-label="Cart"
             >
               <ShoppingCart size={18} />
@@ -202,6 +203,34 @@ export default function Header() {
               >
                 Pages
               </NavLink>
+              <Link
+                to="/login"
+                className="flex items-center gap-2 text-[#23A6F0] font-semibold"
+              >
+                <User size={20} />
+                <span className="text-[16px]">Login / Register</span>
+              </Link>
+              <div className="flex flex-col items-center gap-4 text-[#23A6F0] font-semibold">
+                <button className="p-1" aria-label="Search">
+                  <Search size={22} strokeWidth={2} />
+                </button>
+                <Link
+                  to="/cart"
+                  className="flex items-center gap-1"
+                  aria-label="Cart"
+                >
+                  <ShoppingCart size={22} strokeWidth={2} />
+                  <span className="text-xs">1</span>
+                </Link>
+                <Link
+                  to="/favorites"
+                  className="flex items-center gap-1"
+                  aria-label="Favorites"
+                >
+                  <Heart size={22} strokeWidth={2} />
+                  <span className="text-xs">1</span>
+                </Link>
+              </div>
             </div>
           </div>
         )}

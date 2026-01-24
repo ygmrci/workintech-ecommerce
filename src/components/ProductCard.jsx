@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 export default function ProductCard({
+  id,
   image,
   title,
   department,
@@ -8,16 +9,17 @@ export default function ProductCard({
   discountPrice,
   colors = [],
 }) {
+  const productLink = id ? `/product/${id}` : "/product/1";
   return (
     <div className="w-full flex flex-col items-center">
       <Link
-        to="/product"
+        to={productLink}
         className="w-full overflow-hidden bg-white max-w-[360px] h-[427px]"
       >
         <img
           src={image}
           alt={title}
-          className="w-full h-full object-contain object-top"
+          className="w-full h-full object-contain object-center"
           loading="lazy"
         />
       </Link>

@@ -285,6 +285,7 @@ export default function HomePage() {
                 className="w-full md:w-[calc(25%-18px)]"
               >
                 <ProductCard
+                  id={product.id}
                   image={product.image}
                   title={product.title}
                   department={product.department}
