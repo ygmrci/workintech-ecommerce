@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
@@ -11,18 +11,7 @@ import {
   Star,
 } from "lucide-react";
 import ProductCard from "../components/ProductCard";
-import product01 from "../assets/shop/products/shop-product-01.jpg";
-import product02 from "../assets/shop/products/shop-product-02.jpg";
-import product03 from "../assets/shop/products/shop-product-03.jpg";
-import product04 from "../assets/shop/products/shop-product-04.jpg";
-import product05 from "../assets/shop/products/shop-product-05.jpg";
-import product06 from "../assets/shop/products/shop-product-06.jpg";
-import product07 from "../assets/shop/products/shop-product-07.jpg";
-import product08 from "../assets/shop/products/shop-product-08.jpg";
-import product09 from "../assets/shop/products/shop-product-09.jpg";
-import product10 from "../assets/shop/products/shop-product-10.jpg";
-import product11 from "../assets/shop/products/shop-product-11.jpg";
-import product12 from "../assets/shop/products/shop-product-12.jpg";
+import { products } from "../data/products";
 import logo01 from "../assets/shop/logos/shop-logo-1.png";
 import logo02 from "../assets/shop/logos/shop-logo-2.png";
 import logo03 from "../assets/shop/logos/shop-logo-3.png";
@@ -30,104 +19,7 @@ import logo04 from "../assets/shop/logos/shop-logo-4.png";
 import logo05 from "../assets/shop/logos/shop-logo-5.png";
 import logo06 from "../assets/shop/logos/shop-logo-6.png";
 
-const productCatalog = [
-  {
-    id: 1,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product01,
-  },
-  {
-    id: 2,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product02,
-  },
-  {
-    id: 3,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product03,
-  },
-  {
-    id: 4,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product04,
-  },
-  {
-    id: 5,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product05,
-  },
-  {
-    id: 6,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product06,
-  },
-  {
-    id: 7,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product07,
-  },
-  {
-    id: 8,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product08,
-  },
-  {
-    id: 9,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product09,
-  },
-  {
-    id: 10,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product10,
-  },
-  {
-    id: 11,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product11,
-  },
-  {
-    id: 12,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product12,
-  },
-];
+const productCatalog = products;
 
 const logos = [logo01, logo02, logo03, logo04, logo05, logo06];
 
@@ -151,6 +43,7 @@ export default function ProductDetailPage() {
   }, [productIndex]);
   const [currentImage, setCurrentImage] = useState(0);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const loadingTimerRef = useRef(null);
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: false,
     slides: { perView: 1, spacing: 0 },
@@ -158,13 +51,20 @@ export default function ProductDetailPage() {
     slideChanged(s) {
       setCurrentImage(s.track.details.rel);
       setIsImageLoading(true);
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+      }
+      loadingTimerRef.current = setTimeout(() => {
+        setIsImageLoading(false);
+        loadingTimerRef.current = null;
+      }, 400);
     },
   });
   return (
     <div className="w-full flex flex-col">
       <section className="w-full bg-[#FAFAFA]">
         <div className="w-full max-w-6xl mx-auto px-4 py-6 md:py-10">
-          <div className="flex items-center gap-2 text-sm text-[#737373]">
+          <div className="flex items-center justify-center md:justify-start gap-2 text-sm text-[#737373]">
             <Link to="/" className="text-[#252B42] font-semibold">
               Home
             </Link>
@@ -178,7 +78,7 @@ export default function ProductDetailPage() {
 
       <section className="w-full bg-white">
         <div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-12">
-          <div className="flex flex-col gap-8 md:flex-row md:gap-12">
+          <div className="flex flex-col gap-[30px] md:flex-row md:gap-[30px]">
             <div className="w-full md:w-1/2">
               <div className="relative w-full max-w-[506px] h-[450px] bg-[#F5F5F5] rounded-lg overflow-hidden mx-auto md:mx-0">
                 <div
@@ -201,6 +101,9 @@ export default function ProductDetailPage() {
                             setIsImageLoading(false);
                           }
                         }}
+                        onError={() => {
+                          setIsImageLoading(false);
+                        }}
                       />
                     </div>
                   ))}
@@ -213,24 +116,24 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   aria-label="Previous image"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-white/60 bg-white/70 text-[#252B42] flex items-center justify-center"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-transparent text-white flex items-center justify-center"
                   onClick={() => {
                     setIsImageLoading(true);
                     instanceRef.current?.prev();
                   }}
                 >
-                  <ChevronLeft size={22} />
+                  <ChevronLeft size={62} />
                 </button>
                 <button
                   type="button"
                   aria-label="Next image"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-white/60 bg-white/70 text-[#252B42] flex items-center justify-center"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-transparent text-white flex items-center justify-center"
                   onClick={() => {
                     setIsImageLoading(true);
                     instanceRef.current?.next();
                   }}
                 >
-                  <ChevronRight size={22} />
+                  <ChevronRight size={62} />
                 </button>
               </div>
               <div className="mt-4 grid grid-cols-4 gap-3">
@@ -339,7 +242,7 @@ export default function ProductDetailPage() {
           <div className="mt-10 flex flex-col gap-8 md:flex-row md:gap-10">
             <div className="w-full md:w-[45%]">
               <img
-                src={product05}
+                src={product.image}
                 alt="Product detail"
                 className="w-full h-[300px] sm:h-[340px] md:h-[400px] object-cover rounded-lg"
                 loading="lazy"

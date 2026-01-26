@@ -16,6 +16,7 @@ import {
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+   const [isSearchOpen, setIsSearchOpen] = useState(false);
   return (
     <header className="w-full flex flex-col">
       {/* Top Bar */}
@@ -42,10 +43,38 @@ export default function Header() {
           {/* Right */}
           <div className="flex items-center gap-3 text-xs">
             <span className="hidden sm:inline opacity-90">Follow Us :</span>
-            <Instagram size={14} />
-            <Youtube size={14} />
-            <Facebook size={14} />
-            <Twitter size={14} />
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <Instagram size={14} />
+            </a>
+            <a
+              href="https://www.youtube.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="YouTube"
+            >
+              <Youtube size={14} />
+            </a>
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+            >
+              <Facebook size={14} />
+            </a>
+            <a
+              href="https://www.twitter.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Twitter"
+            >
+              <Twitter size={14} />
+            </a>
           </div>
         </div>
       </div>
@@ -111,9 +140,21 @@ export default function Header() {
               <span>Login / Register</span>
             </Link>
 
-            <button className="hidden md:inline-flex p-2" aria-label="Search">
+            <button
+              className="hidden md:inline-flex p-2"
+              aria-label="Search"
+              onClick={() => setIsSearchOpen((prev) => !prev)}
+            >
               <Search size={18} />
             </button>
+
+            {isSearchOpen && (
+              <input
+                type="text"
+                placeholder="Ürün ara..."
+                className="hidden md:inline-flex h-[36px] w-[200px] border border-[#E6E6E6] px-3 text-[13px] rounded transition-all duration-200 ease-in-out"
+              />
+            )}
 
             <Link
               to="/cart"
@@ -121,7 +162,6 @@ export default function Header() {
               aria-label="Cart"
             >
               <ShoppingCart size={18} />
-              <span className="text-xs">1</span>
             </Link>
 
             <Link
@@ -130,7 +170,6 @@ export default function Header() {
               aria-label="Favorites"
             >
               <Heart size={18} />
-              <span className="text-xs">1</span>
             </Link>
 
             <button
@@ -211,16 +250,26 @@ export default function Header() {
                 <span className="text-[16px]">Login / Register</span>
               </Link>
               <div className="flex flex-col items-center gap-4 text-[#23A6F0] font-semibold">
-                <button className="p-1" aria-label="Search">
+                <button
+                  className="p-1"
+                  aria-label="Search"
+                  onClick={() => setIsSearchOpen((prev) => !prev)}
+                >
                   <Search size={22} strokeWidth={2} />
                 </button>
+                {isSearchOpen && (
+                  <input
+                    type="text"
+                    placeholder="Ürün ara..."
+                    className="h-[40px] w-[220px] border border-[#E6E6E6] px-3 text-[13px] rounded transition-all duration-200 ease-in-out"
+                  />
+                )}
                 <Link
                   to="/cart"
                   className="flex items-center gap-1"
                   aria-label="Cart"
                 >
                   <ShoppingCart size={22} strokeWidth={2} />
-                  <span className="text-xs">1</span>
                 </Link>
                 <Link
                   to="/favorites"
@@ -228,7 +277,6 @@ export default function Header() {
                   aria-label="Favorites"
                 >
                   <Heart size={22} strokeWidth={2} />
-                  <span className="text-xs">1</span>
                 </Link>
               </div>
             </div>

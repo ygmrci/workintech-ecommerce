@@ -411,7 +411,7 @@ export default function HomePage() {
           className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white"
           aria-label="Previous vita slide"
         >
-          <ChevronLeft size={36} />
+          <ChevronLeft size={62} />
         </button>
         <button
           type="button"
@@ -419,7 +419,7 @@ export default function HomePage() {
           className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white"
           aria-label="Next vita slide"
         >
-          <ChevronRight size={36} />
+          <ChevronRight size={62} />
         </button>
         <div className="absolute left-1/2 -translate-x-1/2 bottom-6 w-[126px] h-[10px] flex items-center gap-2">
           {vitaSlides.map((_, idx) => (

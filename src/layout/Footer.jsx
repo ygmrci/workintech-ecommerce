@@ -7,21 +7,45 @@ export default function Footer() {
         <div className="w-full max-w-6xl mx-auto flex flex-col items-start gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between">
           <span className="text-lg font-bold text-[#252B42]">Bandage</span>
           <div className="flex items-center gap-4">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#23A6F0]">
+            <a
+              href="https://www.facebook.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#23A6F0]"
+            >
               <Facebook
                 size={18}
                 strokeWidth={1.25}
                 className="text-white"
                 fill="white"
               />
-            </span>
-            <Instagram size={24} strokeWidth={1.5} className="text-[#23A6F0]" />
-            <Twitter
-              size={24}
-              strokeWidth={1.5}
-              className="text-[#23A6F0]"
-              fill="#23A6F0"
-            />
+            </a>
+            <a
+              href="https://www.instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <Instagram
+                size={24}
+                strokeWidth={1.5}
+                className="text-[#23A6F0]"
+              />
+            </a>
+            <a
+              href="https://www.twitter.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Twitter"
+            >
+              <Twitter
+                size={24}
+                strokeWidth={1.5}
+                className="text-[#23A6F0]"
+                fill="#23A6F0"
+              />
+            </a>
           </div>
         </div>
       </div>

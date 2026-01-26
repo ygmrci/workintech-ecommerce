@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { LayoutGrid, List } from "lucide-react";
 import ProductCard from "../components/ProductCard";
@@ -7,18 +7,7 @@ import category02 from "../assets/shop/categories/shop-category-2.jpg";
 import category03 from "../assets/shop/categories/shop-category-3.jpg";
 import category04 from "../assets/shop/categories/shop-category-4.jpg";
 import category05 from "../assets/shop/categories/shop-category-5.jpg";
-import product01 from "../assets/shop/products/shop-product-01.jpg";
-import product02 from "../assets/shop/products/shop-product-02.jpg";
-import product03 from "../assets/shop/products/shop-product-03.jpg";
-import product04 from "../assets/shop/products/shop-product-04.jpg";
-import product05 from "../assets/shop/products/shop-product-05.jpg";
-import product06 from "../assets/shop/products/shop-product-06.jpg";
-import product07 from "../assets/shop/products/shop-product-07.jpg";
-import product08 from "../assets/shop/products/shop-product-08.jpg";
-import product09 from "../assets/shop/products/shop-product-09.jpg";
-import product10 from "../assets/shop/products/shop-product-10.jpg";
-import product11 from "../assets/shop/products/shop-product-11.jpg";
-import product12 from "../assets/shop/products/shop-product-12.jpg";
+import { products } from "../data/products";
 import logo01 from "../assets/shop/logos/shop-logo-1.png";
 import logo02 from "../assets/shop/logos/shop-logo-2.png";
 import logo03 from "../assets/shop/logos/shop-logo-3.png";
@@ -34,122 +23,72 @@ const categories = [
   { id: 5, title: "CLOTHS", items: "5 Items", image: category05 },
 ];
 
-const products = [
-  {
-    id: 1,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product01,
-  },
-  {
-    id: 2,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product02,
-  },
-  {
-    id: 3,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product03,
-  },
-  {
-    id: 4,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product04,
-  },
-  {
-    id: 5,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product05,
-  },
-  {
-    id: 6,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product06,
-  },
-  {
-    id: 7,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product07,
-  },
-  {
-    id: 8,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product08,
-  },
-  {
-    id: 9,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product09,
-  },
-  {
-    id: 10,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product10,
-  },
-  {
-    id: 11,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product11,
-  },
-  {
-    id: 12,
-    title: "Graphic Design",
-    department: "English Department",
-    price: "$16.48",
-    discountPrice: "$6.48",
-    image: product12,
-  },
-];
-
 const logos = [logo01, logo02, logo03, logo04, logo05, logo06];
 
 export default function ShopPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [sortBy, setSortBy] = useState("popularity");
+  const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const loadingTimerRef = useRef(null);
-  const pageSizes = [12, 12, 8];
+  const productsSectionRef = useRef(null);
+  const pageSizes = isMobile ? [4, 4, 4] : [12, 12, 8];
   const pageCount = pageSizes.length;
   const perPage = pageSizes[currentPage - 1];
 
-  const visibleProducts = useMemo(
-    () => products.slice(0, perPage),
-    [perPage]
-  );
+  useEffect(() => {
+    const handleResize = () => {
+      const nextIsMobile = window.innerWidth < 640;
+      setIsMobile((prev) => {
+        if (prev !== nextIsMobile) {
+          setCurrentPage(1);
+        }
+        return nextIsMobile;
+      });
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const goToPage = (page) => {
-    if (page === currentPage) return;
+  const filteredProducts = useMemo(() => {
+    const base = showDiscountedOnly
+      ? products.filter((p) => p.discountValue < p.priceValue)
+      : products;
+    const sorted = [...base];
+    if (sortBy === "price-asc") {
+      sorted.sort((a, b) => a.discountValue - b.discountValue);
+    } else if (sortBy === "price-desc") {
+      sorted.sort((a, b) => b.discountValue - a.discountValue);
+    } else {
+      sorted.sort((a, b) => b.popularity - a.popularity);
+    }
+    return sorted;
+  }, [sortBy, showDiscountedOnly]);
+
+  const pagedSource = useMemo(
+    () => filteredProducts.slice(0, 12),
+    [filteredProducts]
+  );
+  const pageStartIndex = pageSizes
+    .slice(0, currentPage - 1)
+    .reduce((a, b) => a + b, 0);
+  const visibleProducts = useMemo(() => {
+    if (isMobile) {
+      return pagedSource.slice(pageStartIndex, pageStartIndex + perPage);
+    }
+    return pagedSource.slice(0, perPage);
+  }, [isMobile, pagedSource, pageStartIndex, perPage]);
+
+  const goToPage = (page, force = false) => {
+    if (!force && page === currentPage) return;
+    if (productsSectionRef.current) {
+      productsSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
     if (loadingTimerRef.current) {
       clearTimeout(loadingTimerRef.current);
     }
@@ -160,6 +99,17 @@ export default function ShopPage() {
       loadingTimerRef.current = null;
     }, 350);
   };
+
+  const handleSortChange = (event) => {
+    setSortBy(event.target.value);
+    goToPage(1, true);
+  };
+
+  const handleFilterClick = () => {
+    setShowDiscountedOnly((prev) => !prev);
+    goToPage(1, true);
+  };
+
 
   return (
     <div className="w-full flex flex-col">
@@ -205,7 +155,7 @@ export default function ShopPage() {
       <section className="w-full bg-[#FAFAFA] border-y border-[#E6E6E6]">
         <div className="w-full max-w-6xl mx-auto px-4 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="text-[14px] text-[#737373] text-center md:text-left">
-            Showing all {products.length} results
+            Showing all {pagedSource.length} results
           </p>
 
           <div className="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row">
@@ -228,12 +178,23 @@ export default function ShopPage() {
             </div>
 
             <div className="flex w-full max-w-[252px] items-center gap-3">
-              <select className="h-[50px] flex-1 px-5 border border-[#E6E6E6] text-[14px] text-[#737373] rounded">
-                <option>Popularity</option>
+              <select
+                className="h-[50px] flex-1 px-5 border border-[#E6E6E6] text-[14px] text-[#737373] rounded"
+                value={sortBy}
+                onChange={handleSortChange}
+              >
+                <option value="popularity">Popularity</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
               </select>
               <button
                 type="button"
-                className="h-[50px] w-[90px] bg-[#23A6F0] text-white text-[14px] rounded"
+                className={`h-[50px] w-[90px] text-[14px] rounded ${
+                  showDiscountedOnly
+                    ? "bg-[#252B42] text-white"
+                    : "bg-[#23A6F0] text-white"
+                }`}
+                onClick={handleFilterClick}
               >
                 Filter
               </button>
@@ -243,7 +204,10 @@ export default function ShopPage() {
       </section>
 
       <section className="w-full">
-        <div className="w-full max-w-6xl mx-auto px-4 py-12">
+        <div
+          ref={productsSectionRef}
+          className="w-full max-w-6xl mx-auto px-4 py-12"
+        >
           {isLoading ? (
             <div className="w-full flex items-center justify-center py-16 text-[#737373]">
               Yükleniyor...
@@ -256,7 +220,7 @@ export default function ShopPage() {
                   className="w-full sm:w-[calc(50%-12px)] md:w-[calc(25%-18px)]"
                 >
                   <ProductCard
-                  id={product.id}
+                    id={product.id}
                     image={product.image}
                     title={product.title}
                     department={product.department}
