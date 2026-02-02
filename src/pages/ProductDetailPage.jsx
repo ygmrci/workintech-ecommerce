@@ -187,10 +187,8 @@ export default function ProductDetailPage() {
                 Availability :{" "}
                 <span className="text-[#23A6F0] font-semibold">In Stock</span>
               </p>
-              <p className="text-[14px] text-[#737373] leading-[22px] max-w-[420px]">
-                Met minim Mollie non desert Alamo est sit cliquey dolor do met
-                sent. RELIT official consequent door ENIM RELIT Mollie.
-                Excitation venial consequent sent nostrum met.
+              <p className="text-[14px] text-[#737373] leading-[22px] max-w-[280px] sm:max-w-[360px] md:max-w-[420px]">
+                Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.
               </p>
 
               <div className="flex items-center gap-3">
@@ -240,41 +238,81 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="mt-10 flex flex-col gap-8 md:flex-row md:gap-10">
-            <div className="w-full md:w-[45%]">
+            <div className="w-full md:w-[40%]">
               <img
                 src={product.image}
                 alt="Product detail"
-                className="w-full h-[300px] sm:h-[340px] md:h-[400px] object-cover rounded-lg"
+                className="w-full h-[260px] sm:h-[320px] md:h-[380px] object-contain rounded-lg bg-white"
                 loading="lazy"
               />
             </div>
-            <div className="w-full md:w-[55%] flex flex-col gap-6 text-[#737373] text-[14px] leading-[22px]">
+            <div className="w-full md:w-[32%] px-4 md:px-0 flex flex-col gap-5 md:gap-6 text-[#737373] text-[14px] leading-[20px] tracking-[0.2px] md:max-w-[332px] md:min-h-[340px]">
               <div className="flex flex-col gap-3">
                 <h3 className="text-[#252B42] font-bold text-[16px]">
                   the quick fox jumps over
                 </h3>
                 <p>
-                  Met minim Mollie non desert Alamo est sit cliquey dolor do met
-                  sent. RELIT official consequent door ENIM RELIT Mollie.
+                  Met minim Mollie non desert Alamo est sit
+                  <br className="md:hidden" /> cliquey dolor do met sent. RELIT
+                  official
+                  <br className="md:hidden" /> consequent door ENIM RELIT Mollie.
+                  <br className="md:hidden" /> Excitation venial consequent sent
+                  nostrum
+                  <br className="md:hidden" /> met.
                 </p>
               </div>
-              <div className="flex flex-col gap-3">
+              <p>
+                Met minim Mollie non desert Alamo est sit
+                <br className="md:hidden" /> cliquey dolor do met sent. RELIT
+                official
+                <br className="md:hidden" /> consequent door ENIM RELIT Mollie.
+                <br className="md:hidden" /> Excitation venial consequent sent
+                nostrum
+                <br className="md:hidden" /> met.
+              </p>
+              <p>
+                Met minim Mollie non desert Alamo est sit
+                <br className="md:hidden" /> cliquey dolor do met sent. RELIT
+                official
+                <br className="md:hidden" /> consequent door ENIM RELIT Mollie.
+                <br className="md:hidden" /> Excitation venial consequent sent
+                nostrum
+                <br className="md:hidden" /> met.
+              </p>
+            </div>
+            <div className="w-full md:w-[332px] md:flex-none px-4 md:px-0 flex flex-col gap-5 md:gap-[30px] text-[#737373] text-[14px] leading-[22px]">
+              <div className="flex flex-col gap-3 rounded-[9px]">
                 <h3 className="text-[#252B42] font-bold text-[16px]">
                   the quick fox jumps over
                 </h3>
-                <p>
-                  Met minim Mollie non desert Alamo est sit cliquey dolor do met
-                  sent. RELIT official consequent door ENIM RELIT Mollie.
-                </p>
+                <div className="flex flex-col gap-2">
+                  {Array.from({ length: 4 }).map((_, idx) => (
+                    <div key={`desc-item-${idx}`} className="flex items-center gap-2">
+                      <ChevronRight size={16} className="text-[#737373]" />
+                      <span className="text-[13px] sm:text-[14px] font-semibold text-[#737373] whitespace-nowrap">
+                        the quick fox jumps over the lazy dog
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 rounded-[9px]">
                 <h3 className="text-[#252B42] font-bold text-[16px]">
                   the quick fox jumps over
                 </h3>
-                <p>
-                  Met minim Mollie non desert Alamo est sit cliquey dolor do met
-                  sent. RELIT official consequent door ENIM RELIT Mollie.
-                </p>
+                <div className="flex flex-col gap-2">
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <div
+                      key={`desc-item-bottom-${idx}`}
+                      className="flex items-center gap-2"
+                    >
+                      <ChevronRight size={16} className="text-[#737373]" />
+                      <span className="text-[13px] sm:text-[14px] font-semibold text-[#737373] whitespace-nowrap">
+                        the quick fox jumps over the lazy dog
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

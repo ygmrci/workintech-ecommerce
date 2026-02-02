@@ -119,6 +119,13 @@ export default function Header() {
               Blog
             </NavLink>
             <NavLink
+              to="/team"
+              className="hover:text-[#252B42]"
+              activeClassName="text-[#252B42] font-semibold"
+            >
+              Team
+            </NavLink>
+            <NavLink
               to="/contact"
               className="hover:text-[#252B42]"
               activeClassName="text-[#252B42] font-semibold"
@@ -227,6 +234,13 @@ export default function Header() {
                 activeClassName="text-[#252B42] font-semibold"
               >
                 Blog
+              </NavLink>
+              <NavLink
+                to="/team"
+                className="hover:text-[#252B42]"
+                activeClassName="text-[#252B42] font-semibold"
+              >
+                Team
               </NavLink>
               <NavLink
                 to="/contact"

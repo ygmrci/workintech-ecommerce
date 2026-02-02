@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="w-full border-t mt-auto">
       <div className="w-full bg-[#FAFAFA] border-b border-[#E6E6E6]">
-        <div className="w-full max-w-6xl mx-auto flex flex-col items-start gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between">
+        <div className="w-full max-w-6xl mx-auto flex flex-col items-start gap-4 px-6 py-8 md:px-4 md:flex-row md:items-center md:justify-between">
           <span className="text-lg font-bold text-[#252B42]">Bandage</span>
           <div className="flex items-center gap-4">
             <a
@@ -50,7 +50,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="w-full max-w-6xl mx-auto px-4 py-12 flex flex-col gap-8 md:flex-row md:gap-0 md:justify-between">
+      <div className="w-full max-w-6xl mx-auto px-6 py-12 flex flex-col gap-8 md:px-4 md:flex-row md:gap-0 md:justify-between">
         <div className="flex flex-col gap-2 w-full md:w-[148px]">
           <h4 className="text-[14px] font-bold text-[#252B42]">Company Info</h4>
           <a className="text-[13px] text-[#737373]" href="/">
@@ -127,14 +127,12 @@ export default function Footer() {
               Subscribe
             </button>
           </div>
-          <p className="text-[11px] text-[#737373]">
-            Lorem ipsum dolor Amit
-          </p>
+          <p className="text-[11px] text-[#737373]">Lorem ipsum dolor Amit</p>
         </div>
       </div>
 
       <div className="w-full bg-[#FAFAFA]">
-        <div className="w-full max-w-6xl mx-auto px-4 py-4 text-xs text-[#737373]">
+        <div className="w-full max-w-6xl mx-auto px-6 py-4 text-xs text-[#737373] md:px-4">
           Made With Love By Finland All Right Reserved
         </div>
       </div>

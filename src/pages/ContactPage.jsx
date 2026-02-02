@@ -1,52 +1,184 @@
-import contactImage from "../assets/contact/contact.jpg";
+import contactHero from "../assets/contact/contact-hero.png";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  Linkedin,
+  ArrowDown,
+  Phone,
+  MapPin,
+  Send,
+} from "lucide-react";
+
+const contactCards = [
+  {
+    title: "Phone Number",
+    description: "Call us any time",
+    detail: "+451 215 215",
+    cta: "Call Us",
+    icon: Phone,
+    variant: "light",
+  },
+  {
+    title: "Office Location",
+    description: "Visit our office",
+    detail: "Kingston, New York 12401",
+    cta: "Get Directions",
+    icon: MapPin,
+    variant: "dark",
+  },
+  {
+    title: "Email Address",
+    description: "Send a message",
+    detail: "hello@bandage.com",
+    cta: "Email Us",
+    icon: Send,
+    variant: "light",
+  },
+];
 
 export default function ContactPage() {
   return (
     <div className="w-full bg-white">
-      <section className="w-full bg-[#2A7CC7] md:h-[634px]">
-        <div className="w-full max-w-6xl mx-auto px-4 py-12 md:py-0 md:h-full">
-          <div className="relative flex flex-col md:flex-row items-center md:items-stretch md:h-full">
-            <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left py-10 md:py-0 md:pr-10 md:justify-center">
-              <p className="text-[12px] tracking-[1.8px] font-semibold text-white/80">
-                WORK WITH US
-              </p>
-              <h1 className="mt-3 text-[28px] leading-[36px] md:text-[40px] md:leading-[48px] font-bold text-white max-w-[240px] md:max-w-none">
-                <span className="md:hidden">
-                  Now Let&apos;s
-                  <br />
-                  grow Yours
-                </span>
-                <span className="hidden md:inline">Now Let&apos;s grow Yours</span>
+      <section className="w-full md:min-h-[853px] overflow-visible">
+        <div className="w-full max-w-6xl mx-auto px-4 py-10 md:py-16 md:min-h-[853px] overflow-visible">
+          <div className="relative flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12 md:min-h-[520px]">
+            <div className="w-full md:w-1/2 flex flex-col items-start text-left md:pr-6">
+              <span className="text-[12px] font-semibold tracking-[1.8px] text-[#252B42]">
+                CONTACT US
+              </span>
+              <h1 className="mt-3 text-[40px] leading-[50px] md:text-[58px] md:leading-[66px] font-bold text-[#252B42]">
+                <span className="block">Get in touch</span>
+                <span className="block">today!</span>
               </h1>
-              <p className="mt-3 text-[12px] md:text-[14px] leading-[18px] md:leading-[20px] text-white/90 max-w-[240px] md:max-w-none">
-                <span className="md:hidden">
-                  The gradual accumulation of
-                  <br />
-                  information about atomic and
-                  <br />
-                  small-scale behaviour during the
-                  <br />
-                  first quarter of the 20th
-                </span>
-                <span className="hidden md:inline">
-                  The gradual accumulation of information about atomic and
-                  <br />
-                  small-scale behaviour during the first quarter of the 20th
-                </span>
+              <p className="mt-4 text-[14px] leading-[20px] text-[#737373] max-w-[320px] md:max-w-[380px]">
+                We know how large objects will act, but things on a small scale.
               </p>
-              <button className="mt-6 h-[40px] px-8 border border-white text-white text-[12px] font-semibold rounded-[5px]">
-                Button
-              </button>
+              <div className="mt-4 flex flex-col gap-1 text-[14px] text-[#252B42]">
+                <span className="font-semibold">Phone : +451 215 215</span>
+                <span className="font-semibold">Fax : +451 215 215</span>
+              </div>
+              <div className="mt-5 flex items-center gap-3 text-[#252B42]">
+                <a
+                  href="https://www.twitter.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Twitter size={18} />
+                </a>
+                <a
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Facebook size={18} />
+                </a>
+                <a
+                  href="https://www.instagram.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Instagram size={18} />
+                </a>
+                <a
+                  href="https://www.linkedin.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <Linkedin size={18} />
+                </a>
+              </div>
             </div>
-            <div className="hidden md:block w-full md:w-1/2">
+            <div className="w-full md:w-1/2 flex items-center justify-center md:justify-end md:absolute md:-right-6 md:top-1/2 md:-translate-y-1/2 overflow-visible">
               <img
-                src={contactImage}
-                alt="Work with us"
-                className="w-full h-[220px] md:w-[590px] md:h-[634px] object-cover md:absolute md:right-[-142px] md:top-0"
+                src={contactHero}
+                alt="Contact"
+                className="w-full max-w-[600px] md:max-w-[1300px] h-auto object-contain md:scale-[1.5] md:origin-right"
                 loading="lazy"
               />
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="w-full">
+        <div className="w-full max-w-6xl mx-auto px-4 py-10 md:py-16">
+          <div className="text-center">
+            <p className="text-[14px] font-semibold text-[#252B42]">
+              WE HELP SMALL BUSINESSES
+            </p>
+            <h2 className="mt-2 text-[24px] md:text-[40px] font-bold text-[#252B42]">
+              We help small businesses
+              <br className="hidden md:block" />
+              with big ideas
+            </h2>
+          </div>
+
+          <div className="mt-8 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {contactCards.map((card) => {
+              const Icon = card.icon;
+              const isDark = card.variant === "dark";
+              return (
+                <div
+                  key={card.title}
+                  className={`flex flex-col items-center text-center px-6 py-8 rounded-[8px] border ${
+                    isDark
+                      ? "bg-[#252B42] border-[#252B42] text-white"
+                      : "bg-white border-[#E6E6E6] text-[#252B42]"
+                  }`}
+                >
+                  <div
+                    className={`flex h-16 w-16 items-center justify-center rounded-full ${
+                      isDark
+                        ? "bg-white text-[#252B42]"
+                        : "bg-[#23A6F0] text-white"
+                    }`}
+                  >
+                    <Icon size={28} />
+                  </div>
+                  <h3 className="mt-4 text-[16px] font-semibold">
+                    {card.title}
+                  </h3>
+                  <p
+                    className={`mt-2 text-[13px] ${
+                      isDark ? "text-white/80" : "text-[#737373]"
+                    }`}
+                  >
+                    {card.description}
+                  </p>
+                  <p className="mt-3 text-[14px] font-semibold">
+                    {card.detail}
+                  </p>
+                  <button
+                    className={`mt-4 h-[40px] px-5 rounded-[5px] text-[12px] font-semibold ${
+                      isDark
+                        ? "bg-white text-[#252B42]"
+                        : "border border-[#23A6F0] text-[#23A6F0]"
+                    }`}
+                  >
+                    {card.cta}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full">
+        <div className="w-full max-w-6xl mx-auto px-4 py-12 md:py-16 text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#E6E6E6] text-[#23A6F0]">
+            <ArrowDown size={24} />
+          </div>
+          <p className="text-[14px] font-semibold text-[#252B42]">
+            WE CAN&apos;T WAIT TO MEET YOU
+          </p>
+          <h3 className="mt-2 text-[24px] md:text-[40px] font-bold text-[#252B42]">
+            Let&apos;s Talk
+          </h3>
+          <button className="mt-6 h-[40px] px-6 rounded-[5px] bg-[#23A6F0] text-white text-[12px] font-semibold">
+            Try it free now
+          </button>
         </div>
       </section>
     </div>
