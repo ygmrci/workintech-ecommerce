@@ -1,14 +1,9 @@
 import contactHero from "../assets/contact/contact-hero.png";
-import {
-  Facebook,
-  Instagram,
-  Twitter,
-  Linkedin,
-  ArrowDown,
-  Phone,
-  MapPin,
-  Send,
-} from "lucide-react";
+import arrowDownIcon from "../assets/icons/arrow-down.png";
+import phoneIcon from "../assets/icons/phone.png";
+import navigateIcon from "../assets/icons/navigate.png";
+import messageIcon from "../assets/icons/message.png";
+import { Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 
 const contactCards = [
   {
@@ -16,7 +11,7 @@ const contactCards = [
     description: "Call us any time",
     detail: "+451 215 215",
     cta: "Call Us",
-    icon: Phone,
+    icon: phoneIcon,
     variant: "light",
   },
   {
@@ -24,7 +19,7 @@ const contactCards = [
     description: "Visit our office",
     detail: "Kingston, New York 12401",
     cta: "Get Directions",
-    icon: MapPin,
+    icon: navigateIcon,
     variant: "dark",
   },
   {
@@ -32,7 +27,7 @@ const contactCards = [
     description: "Send a message",
     detail: "hello@bandage.com",
     cta: "Email Us",
-    icon: Send,
+    icon: messageIcon,
     variant: "light",
   },
 ];
@@ -116,7 +111,6 @@ export default function ContactPage() {
 
           <div className="mt-8 md:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {contactCards.map((card) => {
-              const Icon = card.icon;
               const isDark = card.variant === "dark";
               return (
                 <div
@@ -127,15 +121,12 @@ export default function ContactPage() {
                       : "bg-white border-[#E6E6E6] text-[#252B42]"
                   }`}
                 >
-                  <div
-                    className={`flex h-16 w-16 items-center justify-center rounded-full ${
-                      isDark
-                        ? "bg-white text-[#252B42]"
-                        : "bg-[#23A6F0] text-white"
-                    }`}
-                  >
-                    <Icon size={28} />
-                  </div>
+                  <img
+                    src={card.icon}
+                    alt={card.title}
+                    className="h-12 w-12"
+                    loading="lazy"
+                  />
                   <h3 className="mt-4 text-[16px] font-semibold">
                     {card.title}
                   </h3>
@@ -167,8 +158,13 @@ export default function ContactPage() {
 
       <section className="w-full">
         <div className="w-full max-w-6xl mx-auto px-4 py-12 md:py-16 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-[#E6E6E6] text-[#23A6F0]">
-            <ArrowDown size={24} />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+            <img
+              src={arrowDownIcon}
+              alt="Arrow down"
+              className="h-6 w-6"
+              loading="lazy"
+            />
           </div>
           <p className="text-[14px] font-semibold text-[#252B42]">
             WE CAN&apos;T WAIT TO MEET YOU
