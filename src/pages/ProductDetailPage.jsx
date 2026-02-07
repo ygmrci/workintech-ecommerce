@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { products } from "../data/products";
-import logo01 from "../assets/shop/logos/shop-logo-1.png";
-import logo02 from "../assets/shop/logos/shop-logo-2.png";
-import logo03 from "../assets/shop/logos/shop-logo-3.png";
-import logo04 from "../assets/shop/logos/shop-logo-4.png";
-import logo05 from "../assets/shop/logos/shop-logo-5.png";
-import logo06 from "../assets/shop/logos/shop-logo-6.png";
+import logo01 from "../assets/shop/logos/shop-logo-1.svg";
+import logo02 from "../assets/shop/logos/shop-logo-2.svg";
+import logo03 from "../assets/shop/logos/shop-logo-3.svg";
+import logo04 from "../assets/shop/logos/shop-logo-4.svg";
+import logo05 from "../assets/shop/logos/shop-logo-5.svg";
+import logo06 from "../assets/shop/logos/shop-logo-6.svg";
 
 const productCatalog = products;
 
@@ -29,7 +29,7 @@ export default function ProductDetailPage() {
   const product =
     productCatalog.find((item) => item.id === productId) || productCatalog[0];
   const productIndex = productCatalog.findIndex(
-    (item) => item.id === product.id
+    (item) => item.id === product.id,
   );
   const gallery = useMemo(() => {
     const total = productCatalog.length;
@@ -188,7 +188,9 @@ export default function ProductDetailPage() {
                 <span className="text-[#23A6F0] font-semibold">In Stock</span>
               </p>
               <p className="text-[14px] text-[#737373] leading-[22px] max-w-[280px] sm:max-w-[360px] md:max-w-[420px]">
-                Met minim Mollie non desert Alamo est sit cliquey dolor do met sent. RELIT official consequent door ENIM RELIT Mollie. Excitation venial consequent sent nostrum met.
+                Met minim Mollie non desert Alamo est sit cliquey dolor do met
+                sent. RELIT official consequent door ENIM RELIT Mollie.
+                Excitation venial consequent sent nostrum met.
               </p>
 
               <div className="flex items-center gap-3">
@@ -232,8 +234,12 @@ export default function ProductDetailPage() {
       <section className="w-full bg-white border-t border-[#ECECEC]">
         <div className="w-full max-w-6xl mx-auto px-4 py-10">
           <div className="flex items-center justify-center gap-8 text-[14px] text-[#737373]">
-            <button className="font-semibold text-[#252B42]">Description</button>
-            <button className="hover:text-[#252B42]">Additional Information</button>
+            <button className="font-semibold text-[#252B42]">
+              Description
+            </button>
+            <button className="hover:text-[#252B42]">
+              Additional Information
+            </button>
             <button className="hover:text-[#252B42]">Reviews (0)</button>
           </div>
 
@@ -255,7 +261,8 @@ export default function ProductDetailPage() {
                   Met minim Mollie non desert Alamo est sit
                   <br className="md:hidden" /> cliquey dolor do met sent. RELIT
                   official
-                  <br className="md:hidden" /> consequent door ENIM RELIT Mollie.
+                  <br className="md:hidden" /> consequent door ENIM RELIT
+                  Mollie.
                   <br className="md:hidden" /> Excitation venial consequent sent
                   nostrum
                   <br className="md:hidden" /> met.
@@ -287,7 +294,10 @@ export default function ProductDetailPage() {
                 </h3>
                 <div className="flex flex-col gap-2">
                   {Array.from({ length: 4 }).map((_, idx) => (
-                    <div key={`desc-item-${idx}`} className="flex items-center gap-2">
+                    <div
+                      key={`desc-item-${idx}`}
+                      className="flex items-center gap-2"
+                    >
                       <ChevronRight size={16} className="text-[#737373]" />
                       <span className="text-[13px] sm:text-[14px] font-semibold text-[#737373] whitespace-nowrap">
                         the quick fox jumps over the lazy dog
@@ -326,10 +336,7 @@ export default function ProductDetailPage() {
           </h2>
           <div className="mt-10 flex flex-wrap gap-6 justify-center md:justify-start">
             {productCatalog.slice(0, 8).map((product) => (
-              <div
-                key={product.id}
-                className="w-full md:w-[calc(25%-18px)]"
-              >
+              <div key={product.id} className="w-full md:w-[calc(25%-18px)]">
                 <ProductCard
                   id={product.id}
                   image={product.image}
