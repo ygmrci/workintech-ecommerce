@@ -1,8 +1,10 @@
 import React from "react";
 import { useKeenSlider } from "keen-slider/react";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import Slider from "../components/Slider";
 import ProductCard from "../components/ProductCard";
-import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, Star } from "lucide-react";
 import editorMen from "../assets/home/editor/editor-men.jpg";
 import editorWomen from "../assets/home/editor/editor-women.jpg";
 import editorAccessories from "../assets/home/editor/editor-accessories.jpg";
@@ -179,6 +181,15 @@ const vitaSlides = [
 
 export default function HomePage() {
   const [vitaSlide, setVitaSlide] = React.useState(0);
+  const categories = useSelector((state) => state.product.categories);
+
+  // Get top 5 categories by rating
+  const topCategories = React.useMemo(() => {
+    return [...categories]
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 5);
+  }, [categories]);
+
   const [vitaRef, vitaInstance] = useKeenSlider({
     loop: true,
     slides: { perView: 1, spacing: 0 },
@@ -193,6 +204,80 @@ export default function HomePage() {
       <section className="w-full">
         <Slider />
       </section>
+
+      {/* Top 5 Categories Section */}
+      {topCategories.length > 0 && (
+        <section className="w-full bg-gray-50 py-16">
+          <div className="w-full max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-[32px] font-bold text-[#252B42] mb-2">
+                Featured Categories
+              </h2>
+              <p className="text-[14px] text-[#737373]">
+                Explore our most popular categories
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+              {topCategories.map((category) => (
+                <Link
+                  key={category.id}
+                  to={`/shop/${category.gender}/${category.title}/${category.id}`}
+                  className="group"
+                >
+                  <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                    {/* Category Image */}
+                    {category.img && (
+                      <div className="relative h-48 bg-gray-200 overflow-hidden">
+                        <img
+                          src={category.img}
+                          alt={category.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+
+                    {/* Category Info */}
+                    <div className="p-4 flex flex-col flex-grow">
+                      <h3 className="text-[16px] font-bold text-[#252B42] mb-2 group-hover:text-[#23A6F0] transition-colors">
+                        {category.title}
+                      </h3>
+
+                      {category.gender && (
+                        <p className="text-[12px] text-[#737373] mb-3 capitalize">
+                          {category.gender}
+                        </p>
+                      )}
+
+                      {/* Rating */}
+                      {category.rating && (
+                        <div className="flex items-center gap-1 mt-auto">
+                          <div className="flex gap-0.5">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                size={14}
+                                className={
+                                  i < Math.round(category.rating)
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : "text-gray-300"
+                                }
+                              />
+                            ))}
+                          </div>
+                          <span className="text-[12px] text-[#737373] ml-1">
+                            ({category.rating.toFixed(1)})
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="w-full py-12">
         <div className="w-full max-w-6xl mx-auto flex flex-col items-center gap-4 px-4">
@@ -280,10 +365,7 @@ export default function HomePage() {
 
           <div className="mt-10 flex flex-wrap gap-6">
             {products.map((product) => (
-              <div
-                key={product.id}
-                className="w-full md:w-[calc(25%-18px)]"
-              >
+              <div key={product.id} className="w-full md:w-[calc(25%-18px)]">
                 <ProductCard
                   id={product.id}
                   image={product.image}
@@ -474,7 +556,9 @@ export default function HomePage() {
             </h3>
             <p className="text-[14px] text-[#737373] mt-2 whitespace-pre-line max-w-[469px] mx-auto">
               <span className="md:hidden">
-                {"Problems trying to resolve the\nconflict between the two major"}
+                {
+                  "Problems trying to resolve the\nconflict between the two major"
+                }
               </span>
               <span className="hidden md:inline">
                 Problems trying to resolve the conflict between
@@ -527,7 +611,8 @@ export default function HomePage() {
                     </span>
                   </div>
                   <button className="flex items-center gap-1 text-[14px] font-semibold text-[#737373]">
-                    Learn More <ChevronRight className="text-[#23A6F0]" size={16} />
+                    Learn More{" "}
+                    <ChevronRight className="text-[#23A6F0]" size={16} />
                   </button>
                 </div>
               </article>

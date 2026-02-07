@@ -6,6 +6,9 @@ const ShopPage = lazy(() => import("../pages/ShopPage"));
 const ProductDetailPage = lazy(() => import("../pages/ProductDetailPage"));
 const ContactPage = lazy(() => import("../pages/ContactPage"));
 const TeamPage = lazy(() => import("../pages/TeamPage"));
+const AboutPage = lazy(() => import("../pages/AboutPage"));
+const SignupPage = lazy(() => import("../pages/SignupPage"));
+const LoginPage = lazy(() => import("../pages/LoginPage"));
 const LoadingFallback = () => (
   <div className="w-full flex items-center justify-center py-16 text-[#737373]">
     Yükleniyor...
@@ -18,14 +21,20 @@ export default function AppRouter() {
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route exact path="/shop" component={ShopPage} />
+        <Route
+          exact
+          path="/shop/:gender/:categoryName/:categoryId"
+          component={ShopPage}
+        />
+        <Route exact path="/about" component={AboutPage} />
+        <Route exact path="/login" component={LoginPage} />
+        <Route exact path="/signup" component={SignupPage} />
         <Route exact path="/team" component={TeamPage} />
         <Route exact path="/contact" component={ContactPage} />
         <Route
           exact
           path="/product/:id"
-          render={(props) => (
-            <ProductDetailPage key={props.match.params.id} />
-          )}
+          render={(props) => <ProductDetailPage key={props.match.params.id} />}
         />
         <Route
           exact

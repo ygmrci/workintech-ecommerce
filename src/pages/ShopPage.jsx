@@ -1,19 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { LayoutGrid, List } from "lucide-react";
 import ProductCard from "../components/ProductCard";
+import { fetchProductsThunk } from "../store/product/productThunks";
 import category01 from "../assets/shop/categories/shop-category-1.jpg";
 import category02 from "../assets/shop/categories/shop-category-2.jpg";
 import category03 from "../assets/shop/categories/shop-category-3.jpg";
 import category04 from "../assets/shop/categories/shop-category-4.jpg";
 import category05 from "../assets/shop/categories/shop-category-5.jpg";
 import { products } from "../data/products";
-import logo01 from "../assets/shop/logos/shop-logo-1.png";
-import logo02 from "../assets/shop/logos/shop-logo-2.png";
-import logo03 from "../assets/shop/logos/shop-logo-3.png";
-import logo04 from "../assets/shop/logos/shop-logo-4.png";
-import logo05 from "../assets/shop/logos/shop-logo-5.png";
-import logo06 from "../assets/shop/logos/shop-logo-6.png";
+import logo01 from "../assets/shop/logos/shop-logo-1.svg";
+import logo02 from "../assets/shop/logos/shop-logo-2.svg";
+import logo03 from "../assets/shop/logos/shop-logo-3.svg";
+import logo04 from "../assets/shop/logos/shop-logo-4.svg";
+import logo05 from "../assets/shop/logos/shop-logo-5.svg";
+import logo06 from "../assets/shop/logos/shop-logo-6.svg";
 
 const categories = [
   { id: 1, title: "CLOTHS", items: "5 Items", image: category01 },
@@ -26,6 +28,10 @@ const categories = [
 const logos = [logo01, logo02, logo03, logo04, logo05, logo06];
 
 export default function ShopPage() {
+  const { gender, categoryName, categoryId } = useParams();
+  const dispatch = useDispatch();
+  const productList = useSelector((state) => state.product.productList);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("popularity");
@@ -33,6 +39,20 @@ export default function ShopPage() {
   const [isMobile, setIsMobile] = useState(false);
   const loadingTimerRef = useRef(null);
   const productsSectionRef = useRef(null);
+
+  // Fetch products when category changes
+  useEffect(() => {
+    if (categoryId) {
+      dispatch(
+        fetchProductsThunk({ limit: 25, offset: 0, filter: categoryId }),
+      );
+    } else if (gender) {
+      dispatch(fetchProductsThunk({ limit: 25, offset: 0, filter: gender }));
+    } else {
+      dispatch(fetchProductsThunk({ limit: 25, offset: 0 }));
+    }
+  }, [gender, categoryId, dispatch]);
+
   const pageSizes = isMobile ? [4, 4, 4] : [12, 12, 8];
   const pageCount = pageSizes.length;
   const perPage = pageSizes[currentPage - 1];
@@ -53,23 +73,30 @@ export default function ShopPage() {
   }, []);
 
   const filteredProducts = useMemo(() => {
-    const base = showDiscountedOnly
-      ? products.filter((p) => p.discountValue < p.priceValue)
-      : products;
-    const sorted = [...base];
+    const base = productList && productList.length > 0 ? productList : products;
+    const filtered = showDiscountedOnly
+      ? base.filter(
+          (p) =>
+            (p.discountValue || p.discount) &&
+            (p.discountValue || p.discount) < (p.priceValue || p.price),
+        )
+      : base;
+    const sorted = [...filtered];
     if (sortBy === "price-asc") {
-      sorted.sort((a, b) => a.discountValue - b.discountValue);
+      sorted.sort(
+        (a, b) => (a.discountValue || a.price) - (b.discountValue || b.price),
+      );
     } else if (sortBy === "price-desc") {
-      sorted.sort((a, b) => b.discountValue - a.discountValue);
-    } else {
-      sorted.sort((a, b) => b.popularity - a.popularity);
+      sorted.sort(
+        (a, b) => (b.discountValue || b.price) - (a.discountValue || a.price),
+      );
     }
     return sorted;
-  }, [sortBy, showDiscountedOnly]);
+  }, [sortBy, showDiscountedOnly, productList]);
 
   const pagedSource = useMemo(
     () => filteredProducts.slice(0, 12),
-    [filteredProducts]
+    [filteredProducts],
   );
   const pageStartIndex = pageSizes
     .slice(0, currentPage - 1)
@@ -110,14 +137,13 @@ export default function ShopPage() {
     goToPage(1, true);
   };
 
-
   return (
     <div className="w-full flex flex-col">
       <section className="w-full bg-white">
         <div className="w-full max-w-6xl mx-auto px-4 py-6 md:py-10 flex flex-col gap-6">
           <div className="flex flex-col gap-3 text-center md:flex-row md:items-center md:justify-between md:text-left">
             <h1 className="text-[24px] md:text-[30px] font-bold text-[#252B42]">
-              Shop
+              {categoryName ? `${categoryName}` : "Shop"}
             </h1>
             <div className="flex items-center justify-center gap-2 text-sm text-[#737373] md:justify-end">
               <Link to="/" className="text-[#252B42] font-semibold">

@@ -1,0 +1,168 @@
+{
+  "info": {
+    "name": "Workintech Ecommerce API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Roles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/roles",
+          "host": ["{{baseUrl}}"],
+          "path": ["roles"]
+        }
+      }
+    },
+    {
+      "name": "Signup - Customer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Customer Name\",\n  \"email\": \"customer@example.com\",\n  \"password\": \"Aa1!aaaa\",\n  \"role_id\": 3\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/signup",
+          "host": ["{{baseUrl}}"],
+          "path": ["signup"]
+        }
+      }
+    },
+    {
+      "name": "Signup - Store",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Store Owner\",\n  \"email\": \"store@example.com\",\n  \"password\": \"Aa1!aaaa\",\n  \"role_id\": 2,\n  \"store\": {\n    \"name\": \"Store Name\",\n    \"phone\": \"05551234567\",\n    \"tax_no\": \"T1234V123456\",\n    \"bank_account\": \"TR123456789012345678901234\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/signup",
+          "host": ["{{baseUrl}}"],
+          "path": ["signup"]
+        }
+      }
+    },
+    {
+      "name": "Login - Customer",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"customer@commerce.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["login"]
+        }
+      }
+    },
+    {
+      "name": "Login - Store",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"store@commerce.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["login"]
+        }
+      }
+    },
+    {
+      "name": "Login - Admin",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@commerce.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["login"]
+        }
+      }
+    },
+    {
+      "name": "Resend Activation",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/resend-activation",
+          "host": ["{{baseUrl}}"],
+          "path": ["resend-activation"]
+        }
+      }
+    },
+    {
+      "name": "Verify Token",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "your_token_here",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/verify",
+          "host": ["{{baseUrl}}"],
+          "path": ["verify"]
+        }
+      }
+    },
+    {
+      "name": "Get Categories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/categories",
+          "host": ["{{baseUrl}}"],
+          "path": ["categories"]
+        }
+      }
+    },
+    {
+      "name": "Get Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/products?limit=25&offset=0",
+          "host": ["{{baseUrl}}"],
+          "path": ["products"],
+          "query": [
+            { "key": "limit", "value": "25" },
+            { "key": "offset", "value": "0" }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://workintech-fe-ecommerce.onrender.com"
+    }
+  ]
+}

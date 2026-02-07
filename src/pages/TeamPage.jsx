@@ -57,7 +57,7 @@ export default function TeamPage() {
             {teamMembers.map((member) => (
               <div
                 key={member.name}
-                className="flex w-full max-w-[230px] flex-col items-start"
+                className="flex w-full max-w-[280px] flex-col items-start"
               >
                 <div className="w-full aspect-square overflow-hidden rounded-[8px] bg-white flex items-center justify-center">
                   {member.image ? (
