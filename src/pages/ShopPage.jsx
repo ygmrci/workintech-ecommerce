@@ -39,6 +39,7 @@ export default function ShopPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState(sortState || "popularity");
+  const [filterText, setFilterText] = useState(filterState || "");
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const loadingTimerRef = useRef(null);
@@ -139,11 +140,23 @@ export default function ShopPage() {
     goToPage(1, true);
   };
 
+  // Debounced filter: update local text immediately, sync to Redux after delay
+  const filterDebounceRef = useRef(null);
   const handleFilterInputChange = (e) => {
     const v = e.target.value;
-    dispatch(setFilter(v));
+    setFilterText(v);
     goToPage(1, true);
+    if (filterDebounceRef.current) clearTimeout(filterDebounceRef.current);
+    filterDebounceRef.current = setTimeout(() => {
+      dispatch(setFilter(v));
+    }, 350);
   };
+
+  // Keep local input in sync when external filterState changes
+  useEffect(() => {
+    if (filterState !== filterText) setFilterText(filterState || "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterState]);
 
   return (
     <div className="w-full flex flex-col">
