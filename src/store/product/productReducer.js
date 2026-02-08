@@ -15,18 +15,23 @@ const initialState = {
   limit: 25,
   offset: 0,
   filter: "",
+  category: null,
+  sort: "",
   fetchState: "NOT_FETCHED", // "NOT_FETCHED" | "FETCHING" | "FETCHED" | "FAILED"
 };
 
 export default function productReducer(state = initialState, action) {
   switch (action.type) {
     case SET_CATEGORIES:
-      // Remove duplicates by id
-      const uniqueCategories = Array.isArray(action.payload)
-        ? Array.from(
-            new Map(action.payload.map((item) => [item.id, item])).values(),
-          )
-        : action.payload;
+      // Ensure categories is always an array and remove duplicates by id
+      const incoming = Array.isArray(action.payload)
+        ? action.payload
+        : action.payload
+          ? [action.payload]
+          : [];
+      const uniqueCategories = Array.from(
+        new Map(incoming.map((item) => [item.id, item])).values(),
+      );
       return { ...state, categories: uniqueCategories };
     case SET_PRODUCT_LIST:
       return { ...state, productList: action.payload };
@@ -40,6 +45,10 @@ export default function productReducer(state = initialState, action) {
       return { ...state, offset: action.payload };
     case SET_FILTER:
       return { ...state, filter: action.payload };
+    case "product/SET_CATEGORY":
+      return { ...state, category: action.payload };
+    case "product/SET_SORT":
+      return { ...state, sort: action.payload };
     default:
       return state;
   }

@@ -5,6 +5,8 @@ export const SET_FETCH_STATE = "product/SET_FETCH_STATE";
 export const SET_LIMIT = "product/SET_LIMIT";
 export const SET_OFFSET = "product/SET_OFFSET";
 export const SET_FILTER = "product/SET_FILTER";
+export const SET_CATEGORY = "product/SET_CATEGORY";
+export const SET_SORT = "product/SET_SORT";
 
 export const setCategories = (categories) => ({ type: SET_CATEGORIES, payload: categories });
 export const setProductList = (list) => ({ type: SET_PRODUCT_LIST, payload: list });
@@ -13,3 +15,5 @@ export const setFetchState = (fetchState) => ({ type: SET_FETCH_STATE, payload: 
 export const setLimit = (limit) => ({ type: SET_LIMIT, payload: limit });
 export const setOffset = (offset) => ({ type: SET_OFFSET, payload: offset });
 export const setFilter = (filter) => ({ type: SET_FILTER, payload: filter });
+export const setCategory = (category) => ({ type: SET_CATEGORY, payload: category });
+export const setSort = (sort) => ({ type: SET_SORT, payload: sort });

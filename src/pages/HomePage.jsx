@@ -193,7 +193,7 @@ export default function HomePage() {
   const [vitaRef, vitaInstance] = useKeenSlider({
     loop: true,
     slides: { perView: 1, spacing: 0 },
-    defaultAnimation: { duration: 1000 },
+    defaultAnimation: { duration: 1000 }, 
     slideChanged(s) {
       setVitaSlide(s.track.details.rel);
     },

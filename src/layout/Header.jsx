@@ -58,6 +58,46 @@ export default function Header() {
     return `https://www.gravatar.com/avatar/${hash}?d=identicon&s=80`;
   }, [userEmail]);
 
+  // Normalize gender segment for routes and encode titles
+  const normalizeGender = (g) => {
+    if (!g) return "other";
+    const gLower = String(g).toLowerCase();
+    if (gLower.includes("kadin") || gLower.includes("kadın") || gLower.includes("kadi")) return "kadin";
+    if (gLower.includes("erkek") || gLower.includes("erk")) return "erkek";
+    return gLower.replace(/\s+/g, "-");
+  };
+
+  const encodeSeg = (s) => (s ? encodeURIComponent(String(s)) : "");
+
+  // Helpers to detect genders in multiple language/format variants
+  const isKadin = (g) => {
+    if (!g) return false;
+    const s = String(g).toLowerCase();
+    return /kadi|kadın|kadin|female|woman|women|fem/.test(s);
+  };
+
+  const isErkek = (g) => {
+    if (!g) return false;
+    const s = String(g).toLowerCase();
+    return /erkek|erk|male|man|men/.test(s);
+  };
+
+  // Filtered category lists for dropdown columns (more tolerant matching)
+  const kadinCategories = useMemo(
+    () => (categories || []).filter((c) => isKadin(c.gender)),
+    [categories],
+  );
+
+  const erkekCategories = useMemo(
+    () => (categories || []).filter((c) => isErkek(c.gender)),
+    [categories],
+  );
+
+  // Debug: log categories when dropdown opens
+  useEffect(() => {
+    // Intentionally left empty: removed debug logs in production code
+  }, [isCategoriesOpen, categories, kadinCategories, erkekCategories]);
+
   const isContactHeader = location.pathname === "/contact";
 
   const getContactNavClass = (path) =>
@@ -298,30 +338,88 @@ export default function Header() {
                 />
               </button>
 
-              {/* Categories Dropdown */}
-              {isCategoriesOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-2xl z-[9999] max-h-96 overflow-y-auto py-2 min-h-[100px]">
-                  {categories && categories.length > 0 ? (
-                    <>
-                      {/* Simple list without grouping */}
-                      {categories.map((category) => (
-                        <Link
-                          key={`${category.id}`}
-                          to={`/shop/${category.gender || "kadin"}/${category.title}/${category.id}`}
-                          onClick={() => setIsCategoriesOpen(false)}
-                          className="block px-4 py-2 text-[#252B42] hover:bg-[#F3F3F3] text-sm hover:text-[#23A6F0]"
-                        >
-                          {category.title}
-                        </Link>
-                      ))}
-                    </>
-                  ) : (
-                    <div className="px-4 py-2 text-[#737373] text-sm">
-                      Kategoriler yükleniyor...
-                    </div>
-                  )}
-                </div>
-              )}
+{/* Categories Dropdown */}
+{isCategoriesOpen && (
+  <div
+    className="
+      absolute top-full left-0
+      mt-2 w-[420px] max-w-[calc(100vw-32px)]
+      z-[9999]
+    "
+  >
+    {/* Outer shell */}
+    <div className="relative rounded-md bg-white shadow-lg border border-gray-200 overflow-hidden min-h-[240px]">
+      {/* (removed left cyan stripe) */}
+
+      {/* Content area */}
+      <div className="relative px-12 py-16">
+        <div className="grid grid-cols-2 gap-16 items-start">
+          {/* Kadın */}
+          <div>
+            <div className="font-bold text-[#252B42] text-xs mb-6">
+              Kadın
+            </div>
+
+            <div className="flex flex-col gap-4 min-h-[120px]">
+              {(() => {
+                const left = kadinCategories.length
+                  ? kadinCategories
+                  : categories.slice(0, Math.ceil((categories || []).length / 2));
+
+                return left.length > 0 ? (
+                  left.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/shop/${normalizeGender(category.gender)}/${encodeSeg(category.title)}/${category.id}`}
+                      onClick={() => setIsCategoriesOpen(false)}
+                      className="block hover:text-[#23A6F0] text-xs leading-5 py-2 text-[#737373]"
+                    >
+                      {category.title}
+                    </Link>
+                  ))
+                ) : (
+                  <div className="text-[#737373] text-xs">No categories</div>
+                );
+              })()}
+            </div>
+          </div>
+
+          {/* Erkek */}
+          <div>
+            <div className="font-bold text-[#252B42] text-xs mb-6">
+              Erkek
+            </div>
+
+            <div className="flex flex-col gap-4 min-h-[120px]">
+              {(() => {
+                const right = erkekCategories.length
+                  ? erkekCategories
+                  : categories.slice(Math.ceil((categories || []).length / 2));
+
+                return right.length > 0 ? (
+                  right.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/shop/${normalizeGender(category.gender)}/${encodeSeg(category.title)}/${category.id}`}
+                      onClick={() => setIsCategoriesOpen(false)}
+                      className="block hover:text-[#23A6F0] text-xs leading-5 py-2 text-[#737373]"
+                    >
+                      {category.title}
+                    </Link>
+                  ))
+                ) : (
+                  <div className="text-[#737373] text-xs">No categories</div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
             </div>
             <NavLink
               to="/about"
@@ -479,7 +577,7 @@ export default function Header() {
                       categories.map((category) => (
                         <Link
                           key={category.id}
-                          to={`/shop/${category.gender}/${category.title}/${category.id}`}
+                          to={`/shop/${normalizeGender(category.gender)}/${encodeSeg(category.title)}/${category.id}`}
                           className="text-[16px] text-[#252B42] hover:text-[#23A6F0]"
                           onClick={() => {
                             setIsMenuOpen(false);

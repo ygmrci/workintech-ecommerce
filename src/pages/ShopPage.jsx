@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { LayoutGrid, List } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { fetchProductsThunk } from "../store/product/productThunks";
+import { setFilter, setSort } from "../store/product/productActions";
 import category01 from "../assets/shop/categories/shop-category-1.jpg";
 import category02 from "../assets/shop/categories/shop-category-2.jpg";
 import category03 from "../assets/shop/categories/shop-category-3.jpg";
@@ -31,27 +32,26 @@ export default function ShopPage() {
   const { gender, categoryName, categoryId } = useParams();
   const dispatch = useDispatch();
   const productList = useSelector((state) => state.product.productList);
+  const fetchState = useSelector((state) => state.product.fetchState);
+  const filterState = useSelector((state) => state.product.filter);
+  const sortState = useSelector((state) => state.product.sort);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [sortBy, setSortBy] = useState("popularity");
+  const [sortBy, setSortBy] = useState(sortState || "popularity");
   const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const loadingTimerRef = useRef(null);
   const productsSectionRef = useRef(null);
 
-  // Fetch products when category changes
+  // Fetch products when category/filter/sort/gender change
   useEffect(() => {
-    if (categoryId) {
-      dispatch(
-        fetchProductsThunk({ limit: 25, offset: 0, filter: categoryId }),
-      );
-    } else if (gender) {
-      dispatch(fetchProductsThunk({ limit: 25, offset: 0, filter: gender }));
-    } else {
-      dispatch(fetchProductsThunk({ limit: 25, offset: 0 }));
-    }
-  }, [gender, categoryId, dispatch]);
+    const category = categoryId || null;
+    const sort = sortState || null;
+    const filter = filterState || null;
+    const genderParam = gender || null;
+    dispatch(fetchProductsThunk({ limit: 25, offset: 0, filter, category, sort, gender: genderParam }));
+  }, [gender, categoryId, filterState, sortState, dispatch]);
 
   const pageSizes = isMobile ? [4, 4, 4] : [12, 12, 8];
   const pageCount = pageSizes.length;
@@ -128,12 +128,20 @@ export default function ShopPage() {
   };
 
   const handleSortChange = (event) => {
-    setSortBy(event.target.value);
+    const value = event.target.value;
+    setSortBy(value);
+    dispatch(setSort(value));
     goToPage(1, true);
   };
 
   const handleFilterClick = () => {
     setShowDiscountedOnly((prev) => !prev);
+    goToPage(1, true);
+  };
+
+  const handleFilterInputChange = (e) => {
+    const v = e.target.value;
+    dispatch(setFilter(v));
     goToPage(1, true);
   };
 
@@ -203,16 +211,27 @@ export default function ShopPage() {
               </button>
             </div>
 
-            <div className="flex w-full max-w-[252px] items-center gap-3">
+            <div className="flex w-full max-w-[360px] items-center gap-3">
               <select
-                className="h-[50px] flex-1 px-5 border border-[#E6E6E6] text-[14px] text-[#737373] rounded"
+                className="h-[50px] px-4 border border-[#E6E6E6] text-[14px] text-[#737373] rounded flex-1"
                 value={sortBy}
                 onChange={handleSortChange}
               >
-                <option value="popularity">Popularity</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
+                <option value="">Sort By</option>
+                <option value="price:asc">price:asc</option>
+                <option value="price:desc">price:desc</option>
+                <option value="rating:asc">rating:asc</option>
+                <option value="rating:desc">rating:desc</option>
               </select>
+
+              <input
+                type="text"
+                placeholder="Filter"
+                className="h-[50px] px-4 border border-[#E6E6E6] text-[14px] text-[#737373] rounded flex-1"
+                value={filterState || ""}
+                onChange={handleFilterInputChange}
+              />
+
               <button
                 type="button"
                 className={`h-[50px] w-[90px] text-[14px] rounded ${
@@ -234,7 +253,7 @@ export default function ShopPage() {
           ref={productsSectionRef}
           className="w-full max-w-6xl mx-auto px-4 py-12"
         >
-          {isLoading ? (
+          {(isLoading || fetchState === "FETCHING") ? (
             <div className="w-full flex items-center justify-center py-16 text-[#737373]">
               Yükleniyor...
             </div>
