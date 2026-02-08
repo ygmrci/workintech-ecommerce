@@ -120,6 +120,20 @@ export default function ShopPage() {
     if (loadingTimerRef.current) {
       clearTimeout(loadingTimerRef.current);
     }
+    // Compute server-side pagination params for the target page
+    const targetPerPage = pageSizes[page - 1] || pageSizes[pageSizes.length - 1];
+    const targetOffset = pageSizes.slice(0, page - 1).reduce((a, b) => a + b, 0);
+    dispatch(
+      fetchProductsThunk({
+        limit: targetPerPage,
+        offset: targetOffset,
+        filter: filterState || null,
+        category: categoryId || null,
+        sort: sortState || null,
+        gender: gender || null,
+      }),
+    );
+
     setIsLoading(true);
     loadingTimerRef.current = setTimeout(() => {
       setCurrentPage(page);
