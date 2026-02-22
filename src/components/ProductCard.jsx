@@ -8,13 +8,14 @@ export default function ProductCard({
   price,
   discountPrice,
   colors = [],
+  to,
 }) {
-  const productLink = id ? `/product/${id}` : "/product/1";
+  const productLink = to || (id ? `/product/${id}` : "/product/1");
   return (
     <div className="w-full flex flex-col items-center">
       <Link
         to={productLink}
-        className="w-full overflow-hidden bg-white max-w-[360px] h-[427px] flex items-center justify-center"
+        className="w-full overflow-hidden bg-white max-w-[360px] h-[427px] flex items-center justify-center cursor-pointer transition-transform duration-200 hover:scale-[1.02] hover:shadow-md"
       >
         {image ? (
           <img

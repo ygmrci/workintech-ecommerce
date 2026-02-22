@@ -1,6 +1,9 @@
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { Suspense, lazy } from "react";
+import { useSelector } from "react-redux";
 import HomePage from "../pages/HomePage";
+import CartPage from "../pages/CartPage";
+import CreateOrderPage from "../pages/CreateOrderPage";
 
 const ShopPage = lazy(() => import("../pages/ShopPage"));
 const ProductDetailPage = lazy(() => import("../pages/ProductDetailPage"));
@@ -9,11 +12,36 @@ const TeamPage = lazy(() => import("../pages/TeamPage"));
 const AboutPage = lazy(() => import("../pages/AboutPage"));
 const SignupPage = lazy(() => import("../pages/SignupPage"));
 const LoginPage = lazy(() => import("../pages/LoginPage"));
+const OrdersPage = lazy(() => import("../pages/OrdersPage"));
 const LoadingFallback = () => (
   <div className="w-full flex items-center justify-center py-16 text-[#737373]">
     Yükleniyor...
   </div>
 );
+
+function PrivateRoute(props) {
+  const { component: Component, ...rest } = props;
+  const user = useSelector((state) => state.client.user);
+  const isAuthenticated = Boolean(user && user.token);
+
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        isAuthenticated ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: props.location },
+            }}
+          />
+        )
+      }
+    />
+  );
+}
 
 export default function AppRouter() {
   return (
@@ -25,6 +53,11 @@ export default function AppRouter() {
           exact
           path="/shop/:gender/:categoryName/:categoryId"
           component={ShopPage}
+        />
+        <Route
+          exact
+          path="/shop/:gender/:categoryName/:categoryId/:productNameSlug/:productId"
+          component={ProductDetailPage}
         />
         <Route exact path="/about" component={AboutPage} />
         <Route exact path="/login" component={LoginPage} />
@@ -41,6 +74,9 @@ export default function AppRouter() {
           path="/product"
           render={() => <ProductDetailPage key="product-default" />}
         />
+        <Route exact path="/cart" component={CartPage} />
+        <PrivateRoute exact path="/order" component={CreateOrderPage} />
+        <PrivateRoute exact path="/orders" component={OrdersPage} />
       </Switch>
     </Suspense>
   );

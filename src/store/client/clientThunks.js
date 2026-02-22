@@ -1,5 +1,5 @@
 import api from "../../api/axiosInstance";
-import { setUser, setRoles } from "./clientActions";
+import { setUser, setRoles, setAddressList, setCreditCards } from "./clientActions";
 import { toast } from "react-toastify";
 
 // Fetches roles from backend - only called when needed (e.g., during signup)
@@ -11,6 +11,13 @@ export const fetchRolesThunk = () => async (dispatch) => {
   } catch (err) {
     toast.error("Roller yüklenemedi");
     console.error("Roles fetch error:", err);
+  }
+};
+
+const ensureAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    api.defaults.headers.common.Authorization = token;
   }
 };
 
@@ -71,12 +78,120 @@ export const loginThunk =
       // Set token in axios header for subsequent requests
       api.defaults.headers.common.Authorization = data.token;
 
-      if (rememberMe) localStorage.setItem("token", data.token);
+      const shouldRemember = rememberMe === true;
+      if (shouldRemember) localStorage.setItem("token", data.token);
       else localStorage.removeItem("token");
 
       return data;
     } catch (err) {
-      toast.error("Giriş başarısız");
       throw err;
     }
   };
+
+// Fetches saved addresses of the authenticated user
+// GET /user/address
+export const fetchAddressesThunk = () => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    const { data } = await api.get("/user/address");
+    dispatch(setAddressList(data));
+  } catch (err) {
+    toast.error("Adresler yüklenemedi");
+    console.error("Addresses fetch error:", err);
+  }
+};
+
+// Adds a new address for the user
+// POST /user/address
+export const addAddressThunk = (addressPayload) => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    await api.post("/user/address", addressPayload);
+    toast.success("Adres eklendi");
+    dispatch(fetchAddressesThunk());
+  } catch (err) {
+    toast.error("Adres eklenemedi");
+    console.error("Add address error:", err);
+  }
+};
+
+// Updates an existing address
+// PUT /user/address
+export const updateAddressThunk = (addressPayload) => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    await api.put("/user/address", addressPayload);
+    toast.success("Adres güncellendi");
+    dispatch(fetchAddressesThunk());
+  } catch (err) {
+    toast.error("Adres güncellenemedi");
+    console.error("Update address error:", err);
+  }
+};
+
+// Deletes an address by id
+// DELETE /user/address/:addressId
+export const deleteAddressThunk = (addressId) => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    await api.delete(`/user/address/${addressId}`);
+    toast.success("Adres silindi");
+    dispatch(fetchAddressesThunk());
+  } catch (err) {
+    toast.error("Adres silinemedi");
+    console.error("Delete address error:", err);
+  }
+};
+
+// CARD THUNKS
+
+// GET /user/card - fetch saved cards
+export const fetchCardsThunk = () => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    const { data } = await api.get("/user/card");
+    dispatch(setCreditCards(data));
+  } catch (err) {
+    toast.error("Kartlar yüklenemedi");
+    console.error("Cards fetch error:", err);
+  }
+};
+
+// POST /user/card - save new card
+export const addCardThunk = (cardPayload) => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    await api.post("/user/card", cardPayload);
+    toast.success("Kart kaydedildi");
+    dispatch(fetchCardsThunk());
+  } catch (err) {
+    toast.error("Kart kaydedilemedi");
+    console.error("Add card error:", err);
+  }
+};
+
+// PUT /user/card - update existing card
+export const updateCardThunk = (cardPayload) => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    await api.put("/user/card", cardPayload);
+    toast.success("Kart güncellendi");
+    dispatch(fetchCardsThunk());
+  } catch (err) {
+    toast.error("Kart güncellenemedi");
+    console.error("Update card error:", err);
+  }
+};
+
+// DELETE /user/card/:cardId - delete card
+export const deleteCardThunk = (cardId) => async (dispatch) => {
+  try {
+    ensureAuthHeader();
+    await api.delete(`/user/card/${cardId}`);
+    toast.success("Kart silindi");
+    dispatch(fetchCardsThunk());
+  } catch (err) {
+    toast.error("Kart silinemedi");
+    console.error("Delete card error:", err);
+  }
+};

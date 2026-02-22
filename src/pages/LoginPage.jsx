@@ -24,6 +24,10 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm({ mode: "onBlur" });
 
+  const handleFormError = () => {
+    toast.warn("Lütfen formdaki hataları düzeltin.");
+  };
+
   const onSubmit = async (formData) => {
     setIsSubmitting(true);
     try {
@@ -31,9 +35,11 @@ export default function LoginPage() {
         loginThunk({
           email: formData.email,
           password: formData.password,
-          rememberMe: formData.rememberMe,
+          rememberMe: Boolean(formData.rememberMe),
         }),
       );
+
+      toast.success("Giriş başarılı. Yönlendiriliyorsunuz...");
 
       const backTo = location.state?.from?.pathname || "/";
       history.push(backTo);
@@ -80,7 +86,10 @@ export default function LoginPage() {
           Welcome back. Please sign in.
         </p>
 
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="mt-8 space-y-5"
+          onSubmit={handleSubmit(onSubmit, handleFormError)}
+        >
           <div>
             <label className="text-[14px] font-semibold text-[#252B42]">
               Email

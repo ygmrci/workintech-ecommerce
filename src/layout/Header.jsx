@@ -23,15 +23,52 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const categoriesRef = useRef(null);
+  const cartRef = useRef(null);
+  const userMenuRef = useRef(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const history = useHistory();
   const dispatch = useDispatch();
 
   const user = useSelector((state) => state.client.user);
   const categories = useSelector((state) => state.product.categories);
+  const cartItems = useSelector((state) => state.shoppingCart.cart);
   const userEmail = user?.email || "";
   const isLoggedIn = Boolean(userEmail);
+
+  const cartItemCount = useMemo(
+    () =>
+      (cartItems || []).reduce(
+        (sum, item) => sum + (typeof item.count === "number" ? item.count : 0),
+        0,
+      ),
+    [cartItems],
+  );
+
+  const getCartPriceText = (product) => {
+    if (!product) return "";
+
+    const numeric =
+      typeof product.discountValue === "number"
+        ? product.discountValue
+        : typeof product.priceValue === "number"
+          ? product.priceValue
+          : null;
+
+    if (numeric != null) {
+      return `${numeric.toLocaleString("tr-TR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })} TL`;
+    }
+
+    if (typeof product.discountPrice === "string") return product.discountPrice;
+    if (typeof product.price === "string") return product.price;
+
+    return "";
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -50,6 +87,40 @@ export default function Header() {
     };
   }, [isCategoriesOpen]);
 
+  // Close cart dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (cartRef.current && !cartRef.current.contains(e.target)) {
+        setIsCartOpen(false);
+      }
+    };
+
+    if (isCartOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isCartOpen]);
+
+  // Close user dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    if (isUserMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isUserMenuOpen]);
+
   const avatarUrl = useMemo(() => {
     if (!userEmail) return "";
 
@@ -58,40 +129,81 @@ export default function Header() {
     return `https://www.gravatar.com/avatar/${hash}?d=identicon&s=80`;
   }, [userEmail]);
 
-  // Normalize gender segment for routes and encode titles
+  // Normalize gender segment for routes (API & ShopPage use "k" / "e")
   const normalizeGender = (g) => {
     if (!g) return "other";
-    const gLower = String(g).toLowerCase();
-    if (gLower.includes("kadin") || gLower.includes("kadın") || gLower.includes("kadi")) return "kadin";
-    if (gLower.includes("erkek") || gLower.includes("erk")) return "erkek";
+    const gLower = String(g).toLowerCase().trim();
+    if (gLower === "k" || gLower.includes("kadin") || gLower.includes("kadın") || gLower.includes("kadi"))
+      return "k";
+    if (gLower === "e" || gLower.includes("erkek") || gLower.includes("erk")) return "e";
     return gLower.replace(/\s+/g, "-");
   };
 
-  const encodeSeg = (s) => (s ? encodeURIComponent(String(s)) : "");
+  // Slugify category titles like "Ayakkabı" -> "ayakkabi"
+  const encodeSeg = (s) => {
+    if (!s) return "";
+    const map = {
+      ç: "c",
+      ğ: "g",
+      ı: "i",
+      ö: "o",
+      ş: "s",
+      ü: "u",
+      Ç: "c",
+      Ğ: "g",
+      I: "i",
+      İ: "i",
+      Ö: "o",
+      Ş: "s",
+      Ü: "u",
+    };
+    return String(s)
+      .split("")
+      .map((ch) => map[ch] || ch)
+      .join("")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
 
-  // Helpers to detect genders in multiple language/format variants
+  // Display category title exactly as it comes from backend (or fallback fields)
+  const getCategoryDisplayTitle = (category) => {
+    if (!category) return "";
+    return (
+      category.displayTitle ||
+      category.title ||
+      category.name ||
+      (category.code ? String(category.code) : "")
+    );
+  };
+
+  // Helpers to detect genders in multiple language/format variants (including API values)
   const isKadin = (g) => {
     if (!g) return false;
     const s = String(g).toLowerCase();
+    if (s === "k") return true;
     return /kadi|kadın|kadin|female|woman|women|fem/.test(s);
   };
 
   const isErkek = (g) => {
     if (!g) return false;
     const s = String(g).toLowerCase();
+    if (s === "e") return true;
     return /erkek|erk|male|man|men/.test(s);
   };
 
-  // Filtered category lists for dropdown columns (more tolerant matching)
-  const kadinCategories = useMemo(
-    () => (categories || []).filter((c) => isKadin(c.gender)),
-    [categories],
-  );
+  // Filtered category lists for dropdown columns (all categories, ordered by rating)
+  const kadinCategories = useMemo(() => {
+    const list = (categories || []).filter((c) => isKadin(c.gender));
+    return [...list]
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  }, [categories]);
 
-  const erkekCategories = useMemo(
-    () => (categories || []).filter((c) => isErkek(c.gender)),
-    [categories],
-  );
+  const erkekCategories = useMemo(() => {
+    const list = (categories || []).filter((c) => isErkek(c.gender));
+    return [...list]
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  }, [categories]);
 
   // Debug: log categories when dropdown opens
   useEffect(() => {
@@ -113,6 +225,13 @@ export default function Header() {
   const signupTo = {
     pathname: "/signup",
     state: { from: location },
+  };
+
+  const handleLogout = () => {
+    dispatch({ type: "client/SET_USER", payload: {} });
+    localStorage.removeItem("token");
+    delete api.defaults.headers.common.Authorization;
+    history.push("/");
   };
 
   if (isContactHeader) {
@@ -185,13 +304,45 @@ export default function Header() {
                 </Link>
               </>
             ) : (
-              <div className="hidden md:flex items-center gap-2 text-[#252B42]">
-                <img
-                  src={avatarUrl}
-                  alt="avatar"
-                  className="h-8 w-8 rounded-full"
-                />
-                <span className="text-sm font-semibold">{user?.name}</span>
+              <div
+                className="hidden md:flex items-center gap-2 text-[#252B42] relative"
+                ref={userMenuRef}
+              >
+                <button
+                  type="button"
+                  onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                  className="flex items-center gap-2"
+                >
+                  <img
+                    src={avatarUrl}
+                    alt="avatar"
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <span className="text-sm font-semibold">{user?.name}</span>
+                  <ChevronDown size={14} className="text-[#737373]" />
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-40 bg-white border border-[#E6E6E6] rounded-md shadow-md text-[13px] text-[#252B42] z-[9999]">
+                    <Link
+                      to="/orders"
+                      className="block px-3 py-2 hover:bg-[#F5F5F5]"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Siparişlerim
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-[#F5F5F5] text-[#F44336]"
+                    >
+                      Çıkış Yap
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -374,7 +525,7 @@ export default function Header() {
                       onClick={() => setIsCategoriesOpen(false)}
                       className="block hover:text-[#23A6F0] text-xs leading-5 py-2 text-[#737373]"
                     >
-                      {category.title}
+                      {getCategoryDisplayTitle(category)}
                     </Link>
                   ))
                 ) : (
@@ -404,7 +555,7 @@ export default function Header() {
                       onClick={() => setIsCategoriesOpen(false)}
                       className="block hover:text-[#23A6F0] text-xs leading-5 py-2 text-[#737373]"
                     >
-                      {category.title}
+                      {getCategoryDisplayTitle(category)}
                     </Link>
                   ))
                 ) : (
@@ -469,24 +620,45 @@ export default function Header() {
                 </Link>
               </div>
             ) : (
-              <div className="hidden md:flex items-center gap-2 text-[#252B42]">
-                <img
-                  src={avatarUrl}
-                  alt="avatar"
-                  className="h-8 w-8 rounded-full"
-                />
-                <span className="text-sm font-semibold">{user?.name}</span>
+              <div
+                className="hidden md:flex items-center gap-2 text-[#252B42] relative"
+                ref={userMenuRef}
+              >
                 <button
-                  onClick={() => {
-                    dispatch({ type: "client/SET_USER", payload: {} });
-                    localStorage.removeItem("token");
-                    delete api.defaults.headers.common.Authorization;
-                    history.push("/");
-                  }}
-                  className="text-sm text-[#23A6F0] ml-2"
+                  type="button"
+                  onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                  className="flex items-center gap-2"
                 >
-                  Logout
+                  <img
+                    src={avatarUrl}
+                    alt="avatar"
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <span className="text-sm font-semibold">{user?.name}</span>
+                  <ChevronDown size={14} className="text-[#737373]" />
                 </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-40 bg-white border border-[#E6E6E6] rounded-md shadow-md text-[13px] text-[#252B42] z-[9999]">
+                    <Link
+                      to="/orders"
+                      className="block px-3 py-2 hover:bg-[#F5F5F5]"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Siparişlerim
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-[#F5F5F5] text-[#F44336]"
+                    >
+                      Çıkış Yap
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -506,13 +678,113 @@ export default function Header() {
               />
             )}
 
-            <Link
-              to="/cart"
-              className="hidden md:flex items-center gap-1"
-              aria-label="Cart"
-            >
-              <ShoppingCart size={18} />
-            </Link>
+            {/* Cart dropdown (desktop) */}
+            <div className="hidden md:flex items-center relative" ref={cartRef}>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 p-2 relative"
+                aria-label="Cart"
+                onClick={() => setIsCartOpen((prev) => !prev)}
+              >
+                <ShoppingCart size={18} />
+                {cartItemCount > 0 && (
+                  <span className="ml-1 inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-[#FF6A00] text-[11px] font-semibold text-white">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+
+              {isCartOpen && (
+                <div className="absolute right-0 top-full mt-2 w-[360px] max-w-[calc(100vw-32px)] bg-white border border-[#E6E6E6] rounded-[8px] shadow-lg z-[9999]">
+                  {cartItems && cartItems.length > 0 ? (
+                    <>
+                      {/* Header */}
+                      <div className="px-4 pt-4 pb-2 border-b border-[#F2F2F2] flex items-baseline justify-between">
+                        <p className="text-[14px] font-semibold text-[#252B42]">
+                          Sepetim ({cartItemCount} Ürün)
+                        </p>
+                      </div>
+
+                      {/* Items */}
+                      <div className="max-h-72 overflow-y-auto">
+                        {cartItems.map((item, index) => {
+                          const p = item.product || {};
+                          const key = p.id || p._id || index;
+                          const title = p.title || p.name || "Ürün";
+                          const description =
+                            p.shortDescription ||
+                            p.description ||
+                            p.department ||
+                            "";
+                          const sizeText =
+                            item.size || p.size || p.beden || "";
+                          const count = item.count || 0;
+                          const priceText = getCartPriceText(p);
+
+                          return (
+                            <div
+                              key={key}
+                              className="flex gap-3 px-4 py-3 border-b border-[#F2F2F2] last:border-b-0"
+                            >
+                              {p.image && (
+                                <img
+                                  src={p.image}
+                                  alt={title}
+                                  className="h-[64px] w-[64px] object-contain rounded-[4px] border border-[#E6E6E6] bg-white"
+                                  loading="lazy"
+                                />
+                              )}
+                              <div className="flex-1 flex flex-col justify-between text-[12px]">
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="font-semibold text-[#252B42] line-clamp-2">
+                                    {title}
+                                  </span>
+                                  {description && (
+                                    <span className="text-[#737373] text-[11px] line-clamp-2">
+                                      {description}
+                                    </span>
+                                  )}
+                                  <span className="text-[11px] text-[#B0B0B0] mt-1">
+                                    {sizeText && <>Beden: {sizeText} &nbsp; · &nbsp;</>}
+                                    Adet: {count}
+                                  </span>
+                                </div>
+                                {priceText && (
+                                  <span className="mt-1 text-[13px] font-semibold text-[#F27A1A]">
+                                    {priceText}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Footer buttons */}
+                      <div className="px-4 py-3 border-t border-[#F2F2F2] flex gap-3">
+                        <Link
+                          to="/cart"
+                          className="flex-1 h-[40px] flex items-center justify-center rounded-[4px] border border-[#E6E6E6] text-[13px] text-[#333333] bg-white hover:bg-[#F5F5F5] transition-colors"
+                          onClick={() => setIsCartOpen(false)}
+                        >
+                          Sepete Git
+                        </Link>
+                        <button
+                          type="button"
+                          className="flex-1 h-[40px] flex items-center justify-center rounded-[4px] bg-[#F27A1A] text-[13px] font-semibold text-white hover:bg-[#e46d0f] transition-colors"
+                        >
+                          Siparişi Tamamla
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="px-4 py-4 text-sm text-[#737373] text-center">
+                      Sepetiniz boş.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             <Link
               to="/favorites"
@@ -584,7 +856,7 @@ export default function Header() {
                             setIsCategoriesOpen(false);
                           }}
                         >
-                          {category.title}
+                          {getCategoryDisplayTitle(category)}
                         </Link>
                       ))
                     ) : (

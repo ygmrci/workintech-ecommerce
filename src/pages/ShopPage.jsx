@@ -10,7 +10,6 @@ import category02 from "../assets/shop/categories/shop-category-2.jpg";
 import category03 from "../assets/shop/categories/shop-category-3.jpg";
 import category04 from "../assets/shop/categories/shop-category-4.jpg";
 import category05 from "../assets/shop/categories/shop-category-5.jpg";
-import { products } from "../data/products";
 import logo01 from "../assets/shop/logos/shop-logo-1.svg";
 import logo02 from "../assets/shop/logos/shop-logo-2.svg";
 import logo03 from "../assets/shop/logos/shop-logo-3.svg";
@@ -18,15 +17,57 @@ import logo04 from "../assets/shop/logos/shop-logo-4.svg";
 import logo05 from "../assets/shop/logos/shop-logo-5.svg";
 import logo06 from "../assets/shop/logos/shop-logo-6.svg";
 
-const categories = [
-  { id: 1, title: "CLOTHS", items: "5 Items", image: category01 },
-  { id: 2, title: "CLOTHS", items: "5 Items", image: category02 },
-  { id: 3, title: "CLOTHS", items: "5 Items", image: category03 },
-  { id: 4, title: "CLOTHS", items: "5 Items", image: category04 },
-  { id: 5, title: "CLOTHS", items: "5 Items", image: category05 },
+// Default backend page size for products
+const PAGE_LIMIT = 25;
+
+const fallbackCategoryImages = [
+  category01,
+  category02,
+  category03,
+  category04,
+  category05,
 ];
 
 const logos = [logo01, logo02, logo03, logo04, logo05, logo06];
+
+
+
+const encodeSeg = (s) => {
+  if (!s) return "";
+  const map = {
+    ç: "c",
+    ğ: "g",
+    ı: "i",
+    ö: "o",
+    ş: "s",
+    ü: "u",
+    Ç: "c",
+    Ğ: "g",
+    I: "i",
+    İ: "i",
+    Ö: "o",
+    Ş: "s",
+    Ü: "u",
+  };
+  return String(s)
+    .split("")
+    .map((ch) => map[ch] || ch)
+    .join("")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
+// Map API category titles/codes to display labels (use backend data as-is)
+const getCategoryDisplayTitle = (category) => {
+  if (!category) return "";
+  return (
+    category.displayTitle ||
+    category.title ||
+    category.name ||
+    (category.code ? String(category.code) : "")
+  );
+};
 
 export default function ShopPage() {
   const { gender, categoryName, categoryId } = useParams();
@@ -35,135 +76,114 @@ export default function ShopPage() {
   const fetchState = useSelector((state) => state.product.fetchState);
   const filterState = useSelector((state) => state.product.filter);
   const sortState = useSelector((state) => state.product.sort);
+  const allCategories = useSelector((state) => state.product.categories);
+  const total = useSelector((state) => state.product.total);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [sortBy, setSortBy] = useState(sortState || "popularity");
+  const [sortBy, setSortBy] = useState(sortState || "");
   const [filterText, setFilterText] = useState(filterState || "");
-  const [showDiscountedOnly, setShowDiscountedOnly] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const loadingTimerRef = useRef(null);
   const productsSectionRef = useRef(null);
 
-  // Fetch products when category/filter/sort/gender change
+  // Numeric category id derived from route param (used for backend "category" filter)
+  const routeCategoryId = useMemo(
+    () => (categoryId ? Number(categoryId) : null),
+    [categoryId]
+  );
+
+  // Top 5 categories by rating (for hero section cards)
+  const topCategories = useMemo(() => {
+    const base = (allCategories || []).filter((c) =>
+      typeof c.rating === "number" && !Number.isNaN(c.rating)
+    );
+    if (!base.length) return [];
+    return [...base]
+      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+      .slice(0, 5);
+  }, [allCategories]);
+
+  // Selected category display name (for page title) in English
+  const selectedCategoryName = useMemo(() => {
+    if (!categoryId || !allCategories || !allCategories.length) return "";
+    const match = allCategories.find((c) => String(c.id) === String(categoryId));
+    return match ? getCategoryDisplayTitle(match) : "";
+  }, [categoryId, allCategories]);
+
+  // When a category card is clicked, navigation updates route; useEffect handles fetching.
+  const handleCategoryCardClick = () => {};
+
+ 
+  // Fetch products based on route categoryId, sort and filter.
   useEffect(() => {
-    const category = categoryId || null;
     const sort = sortState || null;
-    const filter = filterState || null;
-    const genderParam = gender || null;
-    dispatch(fetchProductsThunk({ limit: 25, offset: 0, filter, category, sort, gender: genderParam }));
-  }, [gender, categoryId, filterState, sortState, dispatch]);
+    const filter = filterState || "";
+    const offset = (currentPage - 1) * PAGE_LIMIT;
 
-  const pageSizes = isMobile ? [4, 4, 4] : [12, 12, 8];
-  const pageCount = pageSizes.length;
-  const perPage = pageSizes[currentPage - 1];
+    dispatch(
+      fetchProductsThunk({
+        limit: PAGE_LIMIT,
+        offset,
+        category: routeCategoryId,
+        filter,
+        gender: null,
+        sort,
+      })
+    );
+  }, [routeCategoryId, sortState, filterState, currentPage, dispatch]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const nextIsMobile = window.innerWidth < 640;
-      setIsMobile((prev) => {
-        if (prev !== nextIsMobile) {
-          setCurrentPage(1);
-        }
-        return nextIsMobile;
-      });
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const pageCount = useMemo(() => {
+    if (!total || total <= PAGE_LIMIT) return 1;
+    return Math.max(1, Math.ceil(total / PAGE_LIMIT));
+  }, [total]);
 
   const filteredProducts = useMemo(() => {
-    const base = productList && productList.length > 0 ? productList : products;
-    const filtered = showDiscountedOnly
-      ? base.filter(
-          (p) =>
-            (p.discountValue || p.discount) &&
-            (p.discountValue || p.discount) < (p.priceValue || p.price),
-        )
-      : base;
-    const sorted = [...filtered];
-    if (sortBy === "price-asc") {
+    const base = productList || [];
+    const sorted = [...base];
+    if (sortBy === "price:asc") {
       sorted.sort(
-        (a, b) => (a.discountValue || a.price) - (b.discountValue || b.price),
+        (a, b) => (a.discountValue || a.price) - (b.discountValue || b.price)
       );
-    } else if (sortBy === "price-desc") {
+    } else if (sortBy === "price:desc") {
       sorted.sort(
-        (a, b) => (b.discountValue || b.price) - (a.discountValue || a.price),
+        (a, b) => (b.discountValue || b.price) - (a.discountValue || a.price)
       );
+    } else if (sortBy === "rating:asc") {
+      sorted.sort((a, b) => (a.rating || 0) - (b.rating || 0));
+    } else if (sortBy === "rating:desc") {
+      sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     }
     return sorted;
-  }, [sortBy, showDiscountedOnly, productList]);
+  }, [sortBy, productList]);
 
-  const pagedSource = useMemo(
-    () => filteredProducts.slice(0, 12),
-    [filteredProducts],
-  );
-  const pageStartIndex = pageSizes
-    .slice(0, currentPage - 1)
-    .reduce((a, b) => a + b, 0);
-  const visibleProducts = useMemo(() => {
-    if (isMobile) {
-      return pagedSource.slice(pageStartIndex, pageStartIndex + perPage);
-    }
-    return pagedSource.slice(0, perPage);
-  }, [isMobile, pagedSource, pageStartIndex, perPage]);
+  // Backend already limits the number of products per page; just use filtered list
+  const visibleProducts = filteredProducts;
 
-  const goToPage = (page, force = false) => {
-    if (!force && page === currentPage) return;
+  const goToPage = (page) => {
+    if (page < 1 || page > pageCount) return;
+    if (page === currentPage) return;
+
     if (productsSectionRef.current) {
       productsSectionRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-    if (loadingTimerRef.current) {
-      clearTimeout(loadingTimerRef.current);
-    }
-    // Compute server-side pagination params for the target page
-    const targetPerPage = pageSizes[page - 1] || pageSizes[pageSizes.length - 1];
-    const targetOffset = pageSizes.slice(0, page - 1).reduce((a, b) => a + b, 0);
-    dispatch(
-      fetchProductsThunk({
-        limit: targetPerPage,
-        offset: targetOffset,
-        filter: filterState || null,
-        category: categoryId || null,
-        sort: sortState || null,
-        gender: gender || null,
-      }),
-    );
 
-    setIsLoading(true);
-    loadingTimerRef.current = setTimeout(() => {
-      setCurrentPage(page);
-      setIsLoading(false);
-      loadingTimerRef.current = null;
-    }, 350);
+    setCurrentPage(page);
   };
 
   const handleSortChange = (event) => {
     const value = event.target.value;
     setSortBy(value);
-    dispatch(setSort(value));
-    goToPage(1, true);
   };
 
   const handleFilterClick = () => {
-    setShowDiscountedOnly((prev) => !prev);
-    goToPage(1, true);
+    setCurrentPage(1);
+    dispatch(setSort(sortBy || ""));
+    dispatch(setFilter(filterText));
   };
 
-  // Debounced filter: update local text immediately, sync to Redux after delay
-  const filterDebounceRef = useRef(null);
   const handleFilterInputChange = (e) => {
-    const v = e.target.value;
-    setFilterText(v);
-    goToPage(1, true);
-    if (filterDebounceRef.current) clearTimeout(filterDebounceRef.current);
-    filterDebounceRef.current = setTimeout(() => {
-      dispatch(setFilter(v));
-    }, 350);
+    setFilterText(e.target.value);
   };
 
   // Keep local input in sync when external filterState changes
@@ -172,13 +192,19 @@ export default function ShopPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterState]);
 
+  // Keep local sort select in sync when global sort state changes
+  useEffect(() => {
+    if (sortState !== sortBy) setSortBy(sortState || "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortState]);
+
   return (
     <div className="w-full flex flex-col">
       <section className="w-full bg-white">
         <div className="w-full max-w-6xl mx-auto px-4 py-6 md:py-10 flex flex-col gap-6">
           <div className="flex flex-col gap-3 text-center md:flex-row md:items-center md:justify-between md:text-left">
             <h1 className="text-[24px] md:text-[30px] font-bold text-[#252B42]">
-              {categoryName ? `${categoryName}` : "Shop"}
+              {selectedCategoryName || "Shop"}
             </h1>
             <div className="flex items-center justify-center gap-2 text-sm text-[#737373] md:justify-end">
               <Link to="/" className="text-[#252B42] font-semibold">
@@ -190,25 +216,54 @@ export default function ShopPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {categories.map((category) => (
-              <div
-                key={category.id}
-                className="relative w-full max-w-[332px] h-[300px] mx-auto sm:max-w-none sm:h-[210px] md:h-[223px] overflow-hidden rounded-sm"
-              >
-                <img
-                  src={category.image}
-                  alt={category.title}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/25 flex flex-col items-center justify-center text-white gap-1">
-                  <h3 className="text-[16px] font-bold tracking-wide">
-                    {category.title}
-                  </h3>
-                  <p className="text-[14px]">{category.items}</p>
+            {topCategories.length > 0 ? (
+              topCategories.map((category, idx) => {
+                const imgSrc =
+                  category.img ||
+                  fallbackCategoryImages[idx % fallbackCategoryImages.length];
+                return (
+                  <Link
+                    key={category.id}
+                    // ✅ IMPORTANT: keep route gender as "e"/"k" to match API and use slug title with id
+                    to={`/shop/${category.gender}/${encodeSeg(category.title)}/${category.id}`}
+                    onClick={() => handleCategoryCardClick(category)}
+                    className="relative w-full max-w-[332px] h-[300px] mx-auto sm:max-w-none sm:h-[210px] md:h-[223px] overflow-hidden rounded-sm group"
+                  >
+                    <img
+                      src={imgSrc}
+                      alt={category.title}
+                      className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-white gap-1">
+                      <h3 className="text-[16px] font-bold tracking-wide">
+                        {getCategoryDisplayTitle(category)}
+                      </h3>
+                      <p className="text-[14px]">
+                        Rating:{" "}
+                        {category.rating?.toFixed
+                          ? category.rating.toFixed(1)
+                          : category.rating || "-"}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })
+            ) : (
+              fallbackCategoryImages.map((image, idx) => (
+                <div
+                  key={idx}
+                  className="relative w-full max-w-[332px] h-[300px] mx-auto sm:max-w-none sm:h-[210px] md:h-[223px] overflow-hidden rounded-sm animate-pulse bg-gray-200"
+                >
+                  <img
+                    src={image}
+                    alt="Category placeholder"
+                    className="w-full h-full object-cover opacity-60"
+                    loading="lazy"
+                  />
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -216,7 +271,7 @@ export default function ShopPage() {
       <section className="w-full bg-[#FAFAFA] border-y border-[#E6E6E6]">
         <div className="w-full max-w-6xl mx-auto px-4 py-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <p className="text-[14px] text-[#737373] text-center md:text-left">
-            Showing all {pagedSource.length} results
+            Showing {total || visibleProducts.length} results
           </p>
 
           <div className="flex w-full flex-col items-center gap-4 md:w-auto md:flex-row">
@@ -255,17 +310,19 @@ export default function ShopPage() {
                 type="text"
                 placeholder="Filter"
                 className="h-[50px] px-4 border border-[#E6E6E6] text-[14px] text-[#737373] rounded flex-1"
-                value={filterState || ""}
+                value={filterText}
                 onChange={handleFilterInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleFilterClick();
+                  }
+                }}
               />
 
               <button
                 type="button"
-                className={`h-[50px] w-[90px] text-[14px] rounded ${
-                  showDiscountedOnly
-                    ? "bg-[#252B42] text-white"
-                    : "bg-[#23A6F0] text-white"
-                }`}
+                className="h-[50px] w-[90px] text-[14px] rounded bg-[#23A6F0] text-white"
                 onClick={handleFilterClick}
               >
                 Filter
@@ -280,9 +337,14 @@ export default function ShopPage() {
           ref={productsSectionRef}
           className="w-full max-w-6xl mx-auto px-4 py-12"
         >
-          {(isLoading || fetchState === "FETCHING") ? (
+          {fetchState === "FETCHING" ? (
+            <div className="w-full flex flex-col items-center justify-center gap-3 py-16 text-[#737373]">
+              <div className="h-8 w-8 rounded-full border-2 border-[#E6E6E6] border-t-[#23A6F0] animate-spin" />
+              <span>Yükleniyor...</span>
+            </div>
+          ) : visibleProducts.length === 0 ? (
             <div className="w-full flex items-center justify-center py-16 text-[#737373]">
-              Yükleniyor...
+              No products found.
             </div>
           ) : (
             <div className="flex flex-wrap gap-6 justify-center md:justify-start">
@@ -299,6 +361,13 @@ export default function ShopPage() {
                     price={product.price}
                     discountPrice={product.discountPrice}
                     colors={["#23A6F0", "#23856D", "#E77C40", "#252B42"]}
+                    to={
+                      gender && categoryName && categoryId
+                        ? `/shop/${gender}/${categoryName}/${categoryId}/${encodeSeg(
+                            product.title,
+                          )}/${product.id}`
+                        : undefined
+                    }
                   />
                 </div>
               ))}
@@ -317,42 +386,25 @@ export default function ShopPage() {
               >
                 First
               </button>
-              <button
-                type="button"
-                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
-                  currentPage === 1
-                    ? "bg-[#23A6F0] text-white"
-                    : "text-[#23A6F0]"
-                }`}
-                onClick={() => goToPage(1)}
-                aria-current={currentPage === 1 ? "page" : undefined}
-              >
-                1
-              </button>
-              <button
-                type="button"
-                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
-                  currentPage === 2
-                    ? "bg-[#23A6F0] text-white"
-                    : "text-[#23A6F0]"
-                }`}
-                onClick={() => goToPage(2)}
-                aria-current={currentPage === 2 ? "page" : undefined}
-              >
-                2
-              </button>
-              <button
-                type="button"
-                className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
-                  currentPage === 3
-                    ? "bg-[#23A6F0] text-white"
-                    : "text-[#23A6F0]"
-                }`}
-                onClick={() => goToPage(3)}
-                aria-current={currentPage === 3 ? "page" : undefined}
-              >
-                3
-              </button>
+              {Array.from({ length: pageCount }, (_, index) => {
+                const page = index + 1;
+                const isActive = currentPage === page;
+                return (
+                  <button
+                    key={page}
+                    type="button"
+                    className={`px-3 py-3 sm:px-5 border-r border-[#BDBDBD] ${
+                      isActive
+                        ? "bg-[#23A6F0] text-white"
+                        : "text-[#23A6F0]"
+                    }`}
+                    onClick={() => goToPage(page)}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
               <button
                 type="button"
                 className={`px-3 py-3 sm:px-5 ${

@@ -9,6 +9,8 @@ import {
   setLimit,
   setCategory,
   setSort,
+  setSelectedProduct,
+  setSelectedProductFetchState,
 } from "./productActions";
 import { toast } from "react-toastify";
 
@@ -42,58 +44,7 @@ export const fetchProductsThunk =
       const rawProducts = Array.isArray(data) ? data : data.products || [];
       const total = data && typeof data.total === "number" ? data.total : rawProducts.length;
 
-      // Normalization: ensure predictable fields for UI
-      const normalizeProduct = (p, idx) => {
-        if (!p) {
-          return null
-        }
-        const id = p.id ?? p._id ?? idx + 1;
-        const title = p.title || p.name || "Untitled";
-
-        // Normalize image field: API or local data may provide a string URL,
-        // an import/module object (e.g. { default: '/path' }), or an array.
-        let imageRaw = p.image ?? (Array.isArray(p.images) ? p.images[0] : null) ?? null;
-        let image = null;
-        if (typeof imageRaw === "string") {
-          image = imageRaw;
-        } else if (imageRaw && typeof imageRaw === "object") {
-          // Common candidates
-          image = imageRaw.default || imageRaw.src || imageRaw.url || imageRaw.path || null;
-          // If still an object (nested), try first element or default again
-          if (image && typeof image === "object") {
-            image = image.default || null;
-          }
-        }
-        // If not a string by now, set to null so UI shows placeholder
-        if (typeof image !== "string") image = null;
-        const priceValue = Number(p.priceValue ?? p.price ?? 0) || 0;
-        const discountValue = Number(p.discountValue ?? p.discount ?? priceValue) || priceValue;
-        const price = typeof p.price === "string" ? p.price : `$${priceValue.toFixed(2)}`;
-        const discountPrice = typeof p.discountPrice === "string" ? p.discountPrice : `$${discountValue.toFixed(2)}`;
-        const department = p.department || p.category || p.group || "";
-        const gender = p.gender || p.genderType || "";
-
-        // Warn for missing important fields (only in dev)
-        // Use Vite's import.meta.env.MODE instead of process.env (process is undefined in browser)
-        const isProd = typeof import.meta !== "undefined" && import.meta.env && import.meta.env.MODE === "production";
-        if (!isProd) {
-          if (!p.id && !p._id) console.warn(`Product missing id, assigned ${id}`, p);
-          if (!image) console.warn(`Product ${id} has no image or image could not be normalized`, { imageRaw });
-        }
-
-        return {
-          ...p,
-          id,
-          title,
-          image,
-          priceValue,
-          discountValue,
-          price,
-          discountPrice,
-          department,
-          gender,
-        };
-      };
+      const normalizeProduct = (p, idx) => normalizeProductCommon(p, idx);
 
       const products = rawProducts.map((p, i) => normalizeProduct(p, i)).filter(Boolean);
 
@@ -106,6 +57,81 @@ export const fetchProductsThunk =
       console.error("Products fetch error:", err);
     }
   };
+
+// Shared product normalization logic so list and detail views stay consistent
+const normalizeProductCommon = (p, idx = 0) => {
+  if (!p) {
+    return null;
+  }
+  const id = p.id ?? p._id ?? idx + 1;
+  const title = p.title || p.name || "Untitled";
+
+  // Normalize image field: API or local data may provide a string URL,
+  // an import/module object (e.g. { default: '/path' }), or an array/objects.
+  let imageRaw = p.image ?? null;
+  if (!imageRaw && Array.isArray(p.images) && p.images.length > 0) {
+    const firstImage = p.images[0];
+    imageRaw = typeof firstImage === "string" ? firstImage : firstImage && firstImage.url;
+  }
+
+  let image = null;
+  if (typeof imageRaw === "string") {
+    image = imageRaw;
+  } else if (imageRaw && typeof imageRaw === "object") {
+    image = imageRaw.default || imageRaw.src || imageRaw.url || imageRaw.path || null;
+    if (image && typeof image === "object") {
+      image = image.default || null;
+    }
+  }
+  if (typeof image !== "string") image = null;
+
+  const priceValue = Number(p.priceValue ?? p.price ?? 0) || 0;
+  const discountValue = Number(p.discountValue ?? p.discount ?? priceValue) || priceValue;
+  const price = typeof p.price === "string" ? p.price : `$${priceValue.toFixed(2)}`;
+  const discountPrice =
+    typeof p.discountPrice === "string" ? p.discountPrice : `$${discountValue.toFixed(2)}`;
+  const department = p.department || p.category || p.group || "";
+  const gender = p.gender || p.genderType || "";
+
+  const isProd =
+    typeof import.meta !== "undefined" && import.meta.env && import.meta.env.MODE === "production";
+  if (!isProd) {
+    if (!p.id && !p._id) console.warn(`Product missing id, assigned ${id}`, p);
+    if (!image) console.warn(`Product ${id} has no image or image could not be normalized`, { imageRaw });
+  }
+
+  return {
+    ...p,
+    id,
+    title,
+    image,
+    priceValue,
+    discountValue,
+    price,
+    discountPrice,
+    department,
+    gender,
+  };
+};
+
+// Fetch single product for Product Detail page
+export const fetchProductByIdThunk = (productId) => async (dispatch) => {
+  if (!productId) return;
+  try {
+    dispatch(setSelectedProductFetchState("FETCHING"));
+    dispatch(setSelectedProduct(null));
+
+    const { data } = await api.get(`/products/${productId}`);
+    const normalized = normalizeProductCommon(data, 0);
+
+    dispatch(setSelectedProduct(normalized));
+    dispatch(setSelectedProductFetchState("FETCHED"));
+  } catch (err) {
+    dispatch(setSelectedProductFetchState("FAILED"));
+    toast.error("Ürün detayı yüklenemedi");
+    console.error("Product detail fetch error:", err);
+  }
+};
 
 // Fetches all categories
 export const fetchCategoriesThunk = () => async (dispatch) => {
